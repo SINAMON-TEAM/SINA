@@ -14,7 +14,7 @@ public class Post {
     @Column(name="post_id")
     private Long id;
 
-    private Member member;
+    //private Member member;
 
     private String type;
     private String title;
