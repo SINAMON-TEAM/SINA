@@ -7,6 +7,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+//git push test용 주석
+//누군가 보면 지워주세요
+
 @Repository
 public class MemberRepository {
 
