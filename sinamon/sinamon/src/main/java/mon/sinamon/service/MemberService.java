@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+//push test용 주석
+//누군가 본다면 지워주세요
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
