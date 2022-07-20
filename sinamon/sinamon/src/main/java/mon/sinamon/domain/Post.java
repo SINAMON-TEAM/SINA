@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -14,11 +15,14 @@ public class Post {
     @Column(name="post_id")
     private Long id;
 
-    //private Member member;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="member_id")   //1대다 관계에서 연관관계의 주인은 다가 가진다
+    private Member member;
 
     private String type;
     private String title;
     private String text;
-    private Date post_date;
+    private LocalDateTime post_date;
     private int view;
+    private int like_count;
 }

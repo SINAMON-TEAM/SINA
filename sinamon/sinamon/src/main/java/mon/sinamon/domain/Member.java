@@ -22,9 +22,6 @@ public class Member {
     @Embedded
     private Address address;
 
-    @OneToMany
-    private List<Post> posts=new ArrayList<>();
-
 
 
 

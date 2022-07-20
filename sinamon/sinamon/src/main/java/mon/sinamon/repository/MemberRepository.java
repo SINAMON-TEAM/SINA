@@ -1,0 +1,24 @@
+package mon.sinamon.repository;
+
+import mon.sinamon.domain.Member;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+@Repository
+public class MemberRepository {
+
+    @PersistenceContext
+    private EntityManager em;
+
+
+    public Long save(Member member){
+        em.persist(member);
+        return member.getMember_id();
+    }
+
+    public Member find(Long id){
+        return em.find(Member.class, id);
+    }
+}
