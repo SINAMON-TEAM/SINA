@@ -22,7 +22,6 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
-
     // 회원가입
     @PostMapping("/api/members/create")
     public CreateMemberResponse createMember(@RequestBody @Valid CreateMemberRequest request) {

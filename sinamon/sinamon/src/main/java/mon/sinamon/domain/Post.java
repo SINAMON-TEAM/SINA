@@ -23,6 +23,6 @@ public class Post {
     private String title;
     private String text;
     private LocalDateTime post_date;
-    private int view;
-    private int like_count;
+    private int view = 0;
+    private int like_count = 0;
 }

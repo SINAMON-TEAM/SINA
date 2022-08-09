@@ -1,7 +1,6 @@
 package mon.sinamon.repository;
 
 
-import mon.sinamon.domain.Member;
 import mon.sinamon.domain.Post;
 import org.springframework.stereotype.Repository;
 
@@ -41,6 +40,13 @@ public class PostRepository {
                 .getResultList();
     }
 
-
+///////////////////////////////////////////////////////
+    //오류나는 부분
+    public List<Post> findAllWithMember() {
+        return em.createQuery(
+                        "select p from Post p" +
+                                " join fetch p.member m", Post.class) // 이 줄만 없으면 member부분만 null이고 나머지 괜찮음
+                .getResultList();
+    }
 
 }
