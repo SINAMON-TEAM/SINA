@@ -34,7 +34,6 @@ public class PostApiController {
         Post post = new Post();
 
         post.setMember(memberRepository.findOne(request.getMember_id()));
-        //System.out.println("SsSs"+request.getMember());
         post.setType(request.getType());
         post.setTitle(request.getTitle());
         post.setText(request.getText());
@@ -60,7 +59,7 @@ public class PostApiController {
 
 
     // 회원 id로 게시글 조회
-    @GetMapping("/api/posts/{id}")
+    @GetMapping("/api/posts/{id}") // url에서 id값을 받아 인자로 활용
     public List<PostDto> getPostByMemberId(@PathVariable Long id) {
 
         List<Post> posts = postRepository.findByMemberId(id);
@@ -69,6 +68,14 @@ public class PostApiController {
                 .collect(Collectors.toList());
         return result;
     }
+
+
+
+
+
+    /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
+
+
 
 
 

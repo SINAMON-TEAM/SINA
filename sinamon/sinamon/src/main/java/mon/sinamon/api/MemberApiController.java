@@ -37,13 +37,17 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+
+
     // id값으로 회원 조회
-    @GetMapping("/api/members/{id}")
+    @GetMapping("/api/members/{id}") //id값을 url에서 받아와 인자로 활용
     public MemberDto getMemberById(@PathVariable Long id) {
         Member m = memberService.findMemberById(id);
         MemberDto memberDto = new MemberDto(m.getName(),m.getPhone(),m.getNickname(),m.getAddress().getAddress(),m.getAddress().getZipcode());
         return memberDto;
     }
+
+
 
     // 전체 회원 조회
     @GetMapping("/api/members")
@@ -54,6 +58,17 @@ public class MemberApiController {
                 .collect(Collectors.toList()); //Member -> DTO 변환
         return new Result(collect.size(), collect);
     }
+
+
+
+
+
+    /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
+
+
+
+
+
 
     // Json 형식으로 반환을 할 때 Json Array를 그대로 반환하기보다는 이렇게 Result라는 틀로 한번 감싸서 반환하는 것이 유연성에 도움이 된다고 함
     // 예시를 위해 Result 클래스의 멤버로 회원 수를 나타내는 변수 count를 만들었음 이런식으로 배열 외에 다른 필요한 정보 함께 반환 가능
