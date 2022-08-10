@@ -8,10 +8,7 @@ import mon.sinamon.domain.Post;
 import mon.sinamon.repository.MemberRepository;
 import mon.sinamon.repository.PostRepository;
 import mon.sinamon.service.PostService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -51,9 +48,23 @@ public class PostApiController {
     }
 
 
+    // 전체 게시글 조회
     @GetMapping("/api/posts")
-    public List<PostDto> ordersV3() {
+    public List<PostDto> getAllPost() {
         List<Post> posts = postRepository.findAllWithMember();
+        List<PostDto> result = posts.stream()
+                .map(p -> new PostDto(p))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+
+
+    // 회원 id로 게시글 조회
+    @GetMapping("/api/posts/{id}")
+    public List<PostDto> getPostByMemberId(@PathVariable Long id) {
+
+        List<Post> posts = postRepository.findByMemberId(id);
         List<PostDto> result = posts.stream()
                 .map(p -> new PostDto(p))
                 .collect(Collectors.toList());
