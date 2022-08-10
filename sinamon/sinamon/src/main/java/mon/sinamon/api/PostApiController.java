@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Member;
 import mon.sinamon.domain.Post;
+import mon.sinamon.repository.MemberRepository;
 import mon.sinamon.repository.PostRepository;
 import mon.sinamon.service.PostService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ public class PostApiController {
 
     private final PostService postService;
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
 
     // 게시글 작성
@@ -33,7 +35,9 @@ public class PostApiController {
 
         // request에서 받은 회원정보를 member 객체로 생성
         Post post = new Post();
-        post.setMember(request.getMember());
+
+        post.setMember(memberRepository.findOne(request.getMember_id()));
+        //System.out.println("SsSs"+request.getMember());
         post.setType(request.getType());
         post.setTitle(request.getTitle());
         post.setText(request.getText());
@@ -47,7 +51,7 @@ public class PostApiController {
     }
 
 
-    @GetMapping("/api/v3/simple-orders")
+    @GetMapping("/api/posts")
     public List<PostDto> ordersV3() {
         List<Post> posts = postRepository.findAllWithMember();
         List<PostDto> result = posts.stream()
@@ -111,7 +115,7 @@ public class PostApiController {
         static class CreatePostRequest {
             //private Long id;
 
-            private Member member;
+            private Long member_id;
 
             private String type;
             private String title;

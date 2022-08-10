@@ -45,7 +45,7 @@ public class PostRepository {
     public List<Post> findAllWithMember() {
         return em.createQuery(
                         "select p from Post p" +
-                                " join fetch p.member m", Post.class) // 이 줄만 없으면 member부분만 null이고 나머지 괜찮음
+                                " join fetch p.member", Post.class) // 이 줄만 없으면 mem   ber부분만 null이고 나머지 괜찮음
                 .getResultList();
     }
 
