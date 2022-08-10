@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Address;
 import mon.sinamon.domain.Member;
 import mon.sinamon.service.MemberService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Embedded;
 import javax.validation.Valid;
@@ -40,9 +37,17 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    // id값으로 회원 조회
+    @GetMapping("/api/members/{id}")
+    public MemberDto getMemberById(@PathVariable Long id) {
+        Member m = memberService.findMemberById(id);
+        MemberDto memberDto = new MemberDto(m.getName(),m.getPhone(),m.getNickname(),m.getAddress().getAddress(),m.getAddress().getZipcode());
+        return memberDto;
+    }
+
     // 전체 회원 조회
     @GetMapping("/api/members")
-    public Result lookupMember() {
+    public Result getAllMembers() {
         List<Member> findMembers = memberService.findMembers(); // 회원 목록을 List로 받아옴
         List<MemberDto> collect = findMembers.stream()
                 .map(m -> new MemberDto(m.getName(),m.getPhone(),m.getNickname(),m.getAddress().getAddress(),m.getAddress().getZipcode()))

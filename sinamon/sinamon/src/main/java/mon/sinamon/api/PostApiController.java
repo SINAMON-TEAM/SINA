@@ -59,7 +59,6 @@ public class PostApiController {
     }
 
 
-
     // 회원 id로 게시글 조회
     @GetMapping("/api/posts/{id}")
     public List<PostDto> getPostByMemberId(@PathVariable Long id) {
@@ -72,24 +71,8 @@ public class PostApiController {
     }
 
 
-//    // 전체 회원 조회
-//    @GetMapping("/api/members")
-//    public Result lookupMember() {
-//        List<Member> findMembers = memberService.findMembers(); // 회원 목록을 List로 받아옴
-//        List<MemberDto> collect = findMembers.stream()
-//                .map(m -> new MemberDto(m.getName(),m.getPhone(),m.getNickname(),m.getAddress().getAddress(),m.getAddress().getZipcode()))
-//                .collect(Collectors.toList()); //Member -> DTO 변환
-//        return new Result(collect.size(), collect);
-//    }
 
-    // Json 형식으로 반환을 할 때 Json Array를 그대로 반환하기보다는 이렇게 Result라는 틀로 한번 감싸서 반환하는 것이 유연성에 도움이 된다고 함
-    // 예시를 위해 Result 클래스의 멤버로 회원 수를 나타내는 변수 count를 만들었음 이런식으로 배열 외에 다른 필요한 정보 함께 반환 가능
-//    @Data
-//    @AllArgsConstructor
-//    static class Result<T> {
-//        private int count;
-//        private T data;
-//    }
+
 
     // 게시글 조회용 DTO, 나중에 수정하거나 여러개 만들어서 사용할 것
     @Data

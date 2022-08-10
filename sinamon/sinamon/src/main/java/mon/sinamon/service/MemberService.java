@@ -26,4 +26,7 @@ public class MemberService {
 
     //회원 전체 조회
     public List<Member> findMembers() {return memberRepository.findAll();}
+
+    //회원 id값으로 조회
+    public Member findMemberById(Long member_id) {return memberRepository.findOne(member_id);}
 }
