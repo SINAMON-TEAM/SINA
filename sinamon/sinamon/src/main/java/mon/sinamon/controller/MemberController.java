@@ -2,6 +2,7 @@ package mon.sinamon.controller;
 
 import jpabook.jpashop.controller.MemberForm;
 import lombok.RequiredArgsConstructor;
+import mon.sinamon.api.MemberApiController;
 import mon.sinamon.domain.Address;
 import mon.sinamon.domain.Member;
 import mon.sinamon.service.MemberService;
