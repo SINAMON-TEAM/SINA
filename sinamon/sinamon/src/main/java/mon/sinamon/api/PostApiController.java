@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,9 @@ public class PostApiController {
         post.setTitle(request.getTitle());
         post.setText(request.getText());
         post.setPost_date(LocalDateTime.now());
+        post.setPromise_time(request.getPromise_time());
+        post.setMax_people(request.getMax_people());
+        post.setNow_people(request.getNow_people());
         post.setView(request.getView());
         post.setLike_count(request.getLike_count());
 
@@ -50,7 +54,7 @@ public class PostApiController {
     // 전체 게시글 조회
     @GetMapping("/api/posts")
     public List<PostDto> getAllPost() {
-        List<Post> posts = postRepository.findAllWithMember();
+        List<Post> posts = postService.findAllPosts();
         List<PostDto> result = posts.stream()
                 .map(p -> new PostDto(p))
                 .collect(Collectors.toList());
@@ -59,8 +63,36 @@ public class PostApiController {
 
 
     // 회원 id로 게시글 조회
+    @GetMapping("/api/posts/findbymember/{member_id}") // url에서 id값을 받아 인자로 활용
+    public List<PostDto> getPostByMemberId(@PathVariable Long member_id) {
+
+        List<Post> posts = postRepository.findByMemberId(member_id);
+        List<PostDto> result = posts.stream()
+                .map(p -> new PostDto(p))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+
+    // 오류남 다시생각해야됨
+    // 회원이 만든 id로 게시글 조회
+//    @GetMapping("/api/posts/findbymemberid/{member_id}") // url에서 id값을 받아 인자로 활용
+//    public List<PostDto> getPostByMemberMakingId(@PathVariable String member_id) {
+//
+//        List<Post> posts = postService.findPostByMemberMakingId(member_id);
+//        List<PostDto> result = posts.stream()
+//                .map(p -> new PostDto(p))
+//                .collect(Collectors.toList());
+//        return result;
+//    }
+
+
+
+
+
+    // 게시글 id로 게시글 조회
     @GetMapping("/api/posts/{id}") // url에서 id값을 받아 인자로 활용
-    public List<PostDto> getPostByMemberId(@PathVariable Long id) {
+    public List<PostDto> getPostById(@PathVariable Long id) {
 
         List<Post> posts = postRepository.findByMemberId(id);
         List<PostDto> result = posts.stream()
@@ -94,6 +126,9 @@ public class PostApiController {
         private String title;
         private String text;
         private LocalDateTime post_date;
+        private String promise_time;
+        private int max_people;
+        private int now_people;
         private int view;
         private int like_count;
 
@@ -104,6 +139,9 @@ public class PostApiController {
             title = post.getTitle();
             text = post.getText();
             post_date = post.getPost_date();
+            promise_time=post.getPromise_time();
+            max_people=post.getMax_people();
+            now_people=post.getNow_people();
             view = post.getView();
             like_count = post.getLike_count();
         }
@@ -121,6 +159,9 @@ public class PostApiController {
             private String type;
             private String title;
             private String text;
+            private String promise_time;
+            private int max_people;
+            private int now_people;
             private int view = 0;
             private int like_count = 0;
         }

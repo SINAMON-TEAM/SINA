@@ -25,6 +25,15 @@ public class PostService {
         return post.getId();
     }
 
-    //게시물 전체 조회
+    //게시글 전체 조회
     public List<Post> findAllPosts() {return postRepository.findAll();}
+
+    //게시글 id로 조회
+    public Post findPostById(Long id) {return postRepository.findOne(id);}
+
+    //회원이 만든 id로 게시글 조회
+    public List<Post> findPostByMemberMakingId(String id) {return postRepository.findByMemberMakingId(id);}
+
+    //회원 id로 게시글 조회
+    public List<Post> findPostByMemberId(Long id) {return postRepository.findByMemberId(id);}
 }
