@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Address;
 import mon.sinamon.domain.Member;
 import mon.sinamon.service.MemberService;
+import mon.sinamon.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final UserService userService;
 
     @GetMapping("/members/new")
     public String createForm(Model model){
@@ -62,7 +64,10 @@ public class MemberController {
     @ResponseBody
     @GetMapping("/kakao")
     public void kakaoCallback(@RequestParam String code) {
-        System.out.println("나랑께"+code);
+
+        String kaKaoAccessToken = userService.getKaKaoAccessToken(code);
+        userService.createKakaoUser(kaKaoAccessToken);
     }
+
 
 }
