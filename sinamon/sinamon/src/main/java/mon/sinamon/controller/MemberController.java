@@ -1,6 +1,6 @@
 package mon.sinamon.controller;
 
-import jpabook.jpashop.controller.MemberForm;
+import mon.sinamon.controller.MemberForm;
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Address;
 import mon.sinamon.domain.Member;
@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -50,4 +52,17 @@ public class MemberController {
         model.addAttribute("members", members);
         return"members/memberList";
     }
+
+
+    @GetMapping("/members/kakao")
+    public String kakaoLogin(Model model){
+        return "members/kakao";
+    }
+
+    @ResponseBody
+    @GetMapping("/kakao")
+    public void kakaoCallback(@RequestParam String code) {
+        System.out.println("나랑께"+code);
+    }
+
 }

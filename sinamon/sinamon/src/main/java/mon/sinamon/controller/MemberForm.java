@@ -1,4 +1,4 @@
-package jpabook.jpashop.controller;
+package mon.sinamon.controller;
 
 import lombok.Getter;
 import lombok.Setter;
