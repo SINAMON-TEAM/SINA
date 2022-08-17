@@ -14,7 +14,7 @@ public class Member {
     @Id @GeneratedValue
     private Long member_id;
 
-    private Long id;
+    private Long kakao_id;
     private String name;
     private String nickname;
     private String major;

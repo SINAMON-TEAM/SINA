@@ -35,6 +35,9 @@ public class MemberService {
     //회원 id값으로 조회
     public Member findMemberById(Long member_id) {return memberRepository.findOne(member_id);}
 
+    //카카오 id값으로 조회
+    public Member findMemberBykakaoId(Long kakao_id) {return memberRepository.findBykakaoId(kakao_id);}
+
 
 
     public String getKaKaoAccessToken(String code){

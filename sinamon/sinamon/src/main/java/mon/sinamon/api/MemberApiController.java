@@ -12,8 +12,11 @@ import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Embedded;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,7 +24,6 @@ import java.util.stream.Collectors;
 public class MemberApiController {
 
     private final MemberService memberService;
-    private final UserService userService;
 
 
    // 카카오 코드 받기
@@ -35,11 +37,12 @@ public class MemberApiController {
 
 
 
-
+    //카카오 회원가입
     @PostMapping("/api/kakao")
     public CreateMemberResponse2 createKakaoMember(@RequestParam String code) {
         String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
         JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
+        Long id;
 
         Member member = new Member();
 
@@ -55,9 +58,18 @@ public class MemberApiController {
         System.out.println("email = " + email);
         System.out.println("kakao_id = " + kakao_id);
 
-        member.setId(kakao_id);
+        member.setKakao_id(kakao_id);
         member.setName(name);
-        Long id = memberService.join(member);
+
+        try {   //카카오 아이디로 회원이 존재하는지 조회
+            Member findMember = memberService.findMemberBykakaoId(kakao_id);
+            id=findMember.getMember_id();           //회원가입이 돼있으면 회원가입을 따로 안한다
+        }
+        catch(Exception e){ //회원가입이 안돼있을때
+            id = memberService.join(member);    //회원가입을 한다
+        }
+
+
         return new CreateMemberResponse2(id, email, kakao_id, name);
     }
 
@@ -69,7 +81,7 @@ public class MemberApiController {
 
         // request에서 받은 회원정보를 member 객체로 생성
         Member member = new Member();
-        //member.setId(request.getId());
+        member.setKakao_id(request.getKakao_id());
         member.setPassword(request.getPassword());
         member.setName(request.getName());
         member.setPhone(request.getPhone());
@@ -129,7 +141,7 @@ public class MemberApiController {
     // 회원 가입 api 함수가 인자로 받을 클래스
     @Data
     static class CreateMemberRequest {
-        private String id;
+        private Long kakao_id;
         private String password;
         private String name;
         private String phone;

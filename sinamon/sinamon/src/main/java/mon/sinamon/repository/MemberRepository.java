@@ -32,6 +32,8 @@ public class MemberRepository {
         return em.find(Member.class, member_id);
     }
 
+
+
     //전체 회원 조회
     public List<Member> findAll(){
         return em.createQuery("select m from Member m", Member.class)
@@ -58,6 +60,13 @@ public class MemberRepository {
         return em.createQuery("select m from Member m where m.id = :id", Member.class)
                 .setParameter("id", id)
                 .getResultList();
+    }
+
+    //카카오 id로 회원 조회
+    public Member findBykakaoId(Long kakao_id){
+        return em.createQuery("select m from Member m where m.kakao_id = :kakao_id", Member.class)
+                .setParameter("kakao_id", kakao_id)
+                .getSingleResult();
     }
 
 
