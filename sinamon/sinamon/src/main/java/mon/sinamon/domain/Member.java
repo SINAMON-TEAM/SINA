@@ -14,12 +14,13 @@ public class Member {
     @Id @GeneratedValue
     private Long member_id;
 
-    private String id;
+    private Long id;
     private String name;
     private String nickname;
     private String major;
     private String password;
     private String phone;
+    private String email;
 
     @Embedded
     private Address address;

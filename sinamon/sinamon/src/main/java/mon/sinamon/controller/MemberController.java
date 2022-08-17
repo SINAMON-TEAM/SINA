@@ -39,7 +39,7 @@ public class MemberController {
         Address address=new Address(form.getAddress(), form.getZipcode());
         Member member=new Member();
         member.setAddress(address);
-        member.setId(form.getId());
+        //member.setId(form.getId());
         member.setPassword(form.getPassword());
         member.setName(form.getName());
         member.setPhone(form.getPhone());
@@ -62,13 +62,16 @@ public class MemberController {
         return "members/kakao";
     }
 
+    /*
     @ResponseBody
     @GetMapping("/kakao")
     public void kakaoCallback(@RequestParam String code) {
         System.out.println(code);
-        String kaKaoAccessToken = userService.getKaKaoAccessToken(code);
+       String kaKaoAccessToken = userService.getKaKaoAccessToken(code);
         userService.createKakaoUser(kaKaoAccessToken);
     }
+    */
+
 
 
 }

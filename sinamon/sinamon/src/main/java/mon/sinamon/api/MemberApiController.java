@@ -1,11 +1,14 @@
 package mon.sinamon.api;
 
+import com.google.gson.JsonElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Address;
 import mon.sinamon.domain.Member;
 import mon.sinamon.service.MemberService;
+import mon.sinamon.service.UserService;
+import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Embedded;
@@ -18,6 +21,44 @@ import java.util.stream.Collectors;
 public class MemberApiController {
 
     private final MemberService memberService;
+    private final UserService userService;
+
+
+    // 카카오 코드 받기
+    @GetMapping("/api/kakao")
+    public String kakaoCallback(@RequestParam String code) {
+        System.out.println("code = " + code);
+        return code;
+        //  String kaKaoAccessToken = userService.getKaKaoAccessToken(code);
+        // userService.createKakaoUser(kaKaoAccessToken);
+    }
+
+
+    @PostMapping("api/kakao")
+    public CreateMemberResponse createKakaoMember(@RequestBody @Valid String code) {
+        String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
+        JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
+
+        Member member = new Member();
+
+        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
+        boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
+        String email = "";
+        String name = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
+        if (hasEmail) {
+            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            member.setEmail(email);
+        }
+        System.out.println("name = " + name);
+        System.out.println("email = " + email);
+        System.out.println("kakao_id = " + kakao_id);
+
+        member.setId(kakao_id);
+        member.setName(name);
+        Long id = memberService.join(member);
+        return new CreateMemberResponse(id);
+    }
+
 
     // 회원가입
     @PostMapping("/api/members/create")
@@ -25,7 +66,7 @@ public class MemberApiController {
 
         // request에서 받은 회원정보를 member 객체로 생성
         Member member = new Member();
-        member.setId(request.getId());
+        //member.setId(request.getId());
         member.setPassword(request.getPassword());
         member.setName(request.getName());
         member.setPhone(request.getPhone());
@@ -38,15 +79,13 @@ public class MemberApiController {
     }
 
 
-
     // id값으로 회원 조회
     @GetMapping("/api/members/{id}") //id값을 url에서 받아와 인자로 활용
     public MemberDto getMemberById(@PathVariable Long id) {
         Member m = memberService.findMemberById(id);
-        MemberDto memberDto = new MemberDto(m.getName(),m.getPhone(),m.getNickname(),m.getAddress().getAddress(),m.getAddress().getZipcode());
+        MemberDto memberDto = new MemberDto(m.getName(), m.getPhone(), m.getNickname(), m.getAddress().getAddress(), m.getAddress().getZipcode());
         return memberDto;
     }
-
 
 
     // 전체 회원 조회
@@ -54,20 +93,13 @@ public class MemberApiController {
     public Result getAllMembers() {
         List<Member> findMembers = memberService.findMembers(); // 회원 목록을 List로 받아옴
         List<MemberDto> collect = findMembers.stream()
-                .map(m -> new MemberDto(m.getName(),m.getPhone(),m.getNickname(),m.getAddress().getAddress(),m.getAddress().getZipcode()))
+                .map(m -> new MemberDto(m.getName(), m.getPhone(), m.getNickname(), m.getAddress().getAddress(), m.getAddress().getZipcode()))
                 .collect(Collectors.toList()); //Member -> DTO 변환
         return new Result(collect.size(), collect);
     }
 
 
-
-
-
     /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
-
-
-
-
 
 
     // Json 형식으로 반환을 할 때 Json Array를 그대로 반환하기보다는 이렇게 Result라는 틀로 한번 감싸서 반환하는 것이 유연성에 도움이 된다고 함
@@ -107,9 +139,9 @@ public class MemberApiController {
     @Data
     static class CreateMemberResponse {
         private Long id;
+
         public CreateMemberResponse(Long id) {
             this.id = id;
         }
     }
-
 }
