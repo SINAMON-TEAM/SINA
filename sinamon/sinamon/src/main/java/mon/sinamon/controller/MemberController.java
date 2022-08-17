@@ -64,7 +64,7 @@ public class MemberController {
     @ResponseBody
     @GetMapping("/kakao")
     public void kakaoCallback(@RequestParam String code) {
-
+        System.out.println(code);
         String kaKaoAccessToken = userService.getKaKaoAccessToken(code);
         userService.createKakaoUser(kaKaoAccessToken);
     }

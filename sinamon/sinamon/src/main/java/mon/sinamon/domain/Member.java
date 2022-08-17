@@ -15,10 +15,11 @@ public class Member {
     private Long member_id;
 
     private String id;
-    private String password;
     private String name;
-    private String phone;
     private String nickname;
+    private String major;
+    private String password;
+    private String phone;
 
     @Embedded
     private Address address;

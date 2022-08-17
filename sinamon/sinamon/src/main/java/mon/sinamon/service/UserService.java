@@ -101,15 +101,17 @@ public class UserService {
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(result);
 
-            int id = element.getAsJsonObject().get("id").getAsInt();
+            Long id = element.getAsJsonObject().get("id").getAsLong();
             boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
             String email = "";
+            String name=element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
             if(hasEmail){
                 email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             }
 
             System.out.println("id : " + id);
             System.out.println("email : " + email);
+            System.out.println("name : " + name);
 
             br.close();
 
