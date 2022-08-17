@@ -24,7 +24,7 @@ public class MemberApiController {
     private final UserService userService;
 
 
-    // 카카오 코드 받기
+   // 카카오 코드 받기
     @GetMapping("/api/kakao")
     public String kakaoCallback(@RequestParam String code) {
         System.out.println("code = " + code);
@@ -34,8 +34,10 @@ public class MemberApiController {
     }
 
 
-    @PostMapping("api/kakao")
-    public CreateMemberResponse createKakaoMember(@RequestBody @Valid String code) {
+
+
+    @PostMapping("/api/kakao")
+    public CreateMemberResponse2 createKakaoMember(@RequestParam String code) {
         String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
         JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
 
@@ -56,8 +58,9 @@ public class MemberApiController {
         member.setId(kakao_id);
         member.setName(name);
         Long id = memberService.join(member);
-        return new CreateMemberResponse(id);
+        return new CreateMemberResponse2(id, email, kakao_id, name);
     }
+
 
 
     // 회원가입
@@ -142,6 +145,21 @@ public class MemberApiController {
 
         public CreateMemberResponse(Long id) {
             this.id = id;
+        }
+    }
+
+    @Data
+    static class CreateMemberResponse2 {
+        private Long id;
+        private String email;
+        private Long kakao_id;
+        private String name;
+        public CreateMemberResponse2(Long id, String email, Long kakao_id, String name) {
+
+            this.id = id;
+            this.email=email;
+            this.kakao_id=kakao_id;
+            this.name=name;
         }
     }
 }

@@ -55,7 +55,7 @@ public class MemberService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=5a839021b9022410f2f0a040060fc1dc"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=http://localhost:8080/kakao"); // TODO 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=http://localhost:8080/api/kakao"); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
@@ -132,6 +132,7 @@ public class MemberService {
             //Gson 라이브러리로 JSON파싱
             parser = new JsonParser();
             element = parser.parse(result);
+            System.out.println("element = " + element);
             br.close();
 
 
