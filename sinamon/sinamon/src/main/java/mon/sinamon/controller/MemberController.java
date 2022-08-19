@@ -14,6 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -64,10 +67,53 @@ public class MemberController {
         return "members/kakao";
     }
 
+/*
+    //카카오 회원가입(api버전)
+    @PostMapping("/api/kakao")
+    public void createKakaoMember(@RequestParam String code
+    , HttpServletRequest httpServletRequest,
+                                    HttpServletResponse httpServletResponse) {
+        HttpSession session=httpServletRequest.getSession();
+        String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
+        JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
+        Long id;
 
-    //카카오 회원가입
-    @GetMapping("/api/kakao")
-    public void createKakaoMember(@RequestParam String code, HttpSession session) {
+        Member member = new Member();
+
+        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
+        boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
+        String email = "";
+        String name = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
+        if (hasEmail) {
+            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            member.setEmail(email);
+            session.setAttribute("email", email);
+        }
+
+
+        member.setKakao_id(kakao_id);
+        member.setName(name);
+
+        try {   //카카오 아이디로 회원이 존재하는지 조회
+            Member findMember = memberService.findMemberBykakaoId(kakao_id);
+            id=findMember.getMember_id();           //회원가입이 돼있으면 회원가입을 따로 안한다
+        }
+        catch(Exception e){ //회원가입이 안돼있을때
+            id = memberService.join(member);    //회원가입을 한다
+        }
+
+
+        session.setAttribute("member", member);
+        Cookie authCookie=new Cookie("kakao_id", Long.toString(kakao_id));
+        httpServletResponse.addCookie(authCookie);
+
+    }
+*/
+
+/*
+    //카카오 회원가입(mvc버전)
+    @GetMapping("/api/members/kakaologin")
+    public String createKakaoMember(@RequestParam String code, HttpSession session) {
         String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
         JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
         Long id;
@@ -99,9 +145,10 @@ public class MemberController {
         session.setAttribute("access_Token", kaKaoAccessToken);
 
 
-      //  return "redirect:/";
+        return "redirect:/";
 
     }
+*/
 
 
 
