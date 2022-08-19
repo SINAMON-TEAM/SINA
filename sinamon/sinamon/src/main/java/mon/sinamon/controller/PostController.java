@@ -74,7 +74,8 @@ public class PostController {
                          HttpServletResponse httpServletResponse){
         HttpSession session=httpServletRequest.getSession();
         Member member = (Member) session.getAttribute("member");
-        System.out.println("kakao_id = " + member.getKakao_id());
+        Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
+        System.out.println("memberBykakaoId:"+memberBykakaoId.getMember_id());
 
         /*
         String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);

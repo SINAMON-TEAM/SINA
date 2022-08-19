@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.Embedded;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
@@ -26,8 +29,9 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
-/*
+
    // 카카오 코드 받기
+    /*
     @GetMapping("/api/kakao")
     public String kakaoCallback(@RequestParam String code) {
         System.out.println("code = " + code);
@@ -35,88 +39,51 @@ public class MemberApiController {
         //  String kaKaoAccessToken = userService.getKaKaoAccessToken(code);
         // userService.createKakaoUser(kaKaoAccessToken);
     }
-
-
-    //카카오 회원가입
-    @PostMapping("/api/kakao")
-    public CreateMemberResponse2 createKakaoMember(@RequestParam String code, HttpSession session) {
-        String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
-        JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
-        Long id;
-
-        Member member = new Member();
-
-        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
-        boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
-        String email = "";
-        String name = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
-        if (hasEmail) {
-            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
-            member.setEmail(email);
-        }
-
-
-        member.setKakao_id(kakao_id);
-        member.setName(name);
-
-        try {   //카카오 아이디로 회원이 존재하는지 조회
-            Member findMember = memberService.findMemberBykakaoId(kakao_id);
-            id=findMember.getMember_id();           //회원가입이 돼있으면 회원가입을 따로 안한다
-        }
-        catch(Exception e){ //회원가입이 안돼있을때
-            id = memberService.join(member);    //회원가입을 한다
-        }
-        session.setAttribute("email", email);
-        session.setAttribute("access_Token", kaKaoAccessToken);
-
-
-        return new CreateMemberResponse2(id, email, kakao_id, name);
-    }
-
-
-
-    */
-
-    /*
-    //카카오 회원가입
-    @PostMapping("/api/kakao")
-    public CreateMemberResponse2 createKakaoMember(@RequestParam String code) {
-        String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
-        JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
-        Long id;
-
-        Member member = new Member();
-
-        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
-        boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
-        String email = "";
-        String name = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
-        if (hasEmail) {
-            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
-            member.setEmail(email);
-        }
-
-
-        member.setKakao_id(kakao_id);
-        member.setName(name);
-
-        try {   //카카오 아이디로 회원이 존재하는지 조회
-            Member findMember = memberService.findMemberBykakaoId(kakao_id);
-            id=findMember.getMember_id();           //회원가입이 돼있으면 회원가입을 따로 안한다
-            System.out.println("check1");
-        }
-        catch(Exception e){ //회원가입이 안돼있을때
-            id = memberService.join(member);    //회원가입을 한다
-            System.out.println("check2");
-        }
-
-
-        return new CreateMemberResponse2(id, email, kakao_id, name);
-    }
 */
 
 
 
+
+    //카카오 로그인,회원가입(api버전)
+    @PostMapping("/api/members/kakaologin")
+    public void createKakaoMember(@RequestParam String code
+            , HttpServletRequest httpServletRequest,
+                                  HttpServletResponse httpServletResponse) {
+        HttpSession session=httpServletRequest.getSession();
+        String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
+        JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
+        Long id;
+
+        Member member = new Member();
+
+        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
+        boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
+        String email = "";
+        String name = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
+        if (hasEmail) {
+            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            member.setEmail(email);
+            session.setAttribute("email", email);
+        }
+
+
+        member.setKakao_id(kakao_id);
+        member.setName(name);
+
+        try {   //카카오 아이디로 회원이 존재하는지 조회
+            Member findMember = memberService.findMemberBykakaoId(kakao_id);
+            id=findMember.getMember_id();           //회원가입이 돼있으면 회원가입을 따로 안한다
+        }
+        catch(Exception e){ //회원가입이 안돼있을때
+            id = memberService.join(member);    //회원가입을 한다
+        }
+
+
+        session.setAttribute("member", member);
+        Cookie authCookie=new Cookie("kakao_id", Long.toString(kakao_id));
+        httpServletResponse.addCookie(authCookie);
+
+    }
 
 
 

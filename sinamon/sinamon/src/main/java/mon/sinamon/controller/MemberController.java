@@ -67,7 +67,7 @@ public class MemberController {
         return "members/kakao";
     }
 
-
+/*
     //카카오 회원가입(api버전)
     @PostMapping("/api/kakao")
     public void createKakaoMember(@RequestParam String code
@@ -108,11 +108,11 @@ public class MemberController {
         httpServletResponse.addCookie(authCookie);
 
     }
+*/
 
-
-    /*
+/*
     //카카오 회원가입(mvc버전)
-    @GetMapping("/api/kakao")
+    @GetMapping("/api/members/kakaologin")
     public String createKakaoMember(@RequestParam String code, HttpSession session) {
         String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
         JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
@@ -148,8 +148,8 @@ public class MemberController {
         return "redirect:/";
 
     }
-
 */
+
 
 
 
