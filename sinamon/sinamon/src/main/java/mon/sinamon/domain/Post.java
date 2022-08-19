@@ -6,7 +6,9 @@ import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name="post")
@@ -21,13 +23,32 @@ public class Post {
     @NonNull
     private Member member;
 
+    @OneToMany(mappedBy = "post")
+    private List<Chatroom> chatrooms = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private PromiseStatus promist_status = PromiseStatus.READY; //[READY, COMP, CANCEL]
+
     private String type; // 배달음식인지 배송식품인지
     private String title; // 제목
     private String text; // 내용
-    private LocalDateTime post_date; // 작성 시간
+    private LocalDateTime post_date = LocalDateTime.now(); // 작성 시간
     private String promise_time; // 약속 시간
     private int max_people = 2;
     private int now_people = 1;
+
     private int view = 0;
     private int like_count = 0;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="member_id2")
+    private Member member2;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="member_id3")
+    private Member member3;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="member_id4")
+    private Member member4;
 }
