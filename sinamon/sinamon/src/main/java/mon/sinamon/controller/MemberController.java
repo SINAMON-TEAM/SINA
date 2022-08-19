@@ -12,12 +12,11 @@ import mon.sinamon.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -52,9 +51,10 @@ public class MemberController {
     }
 
     @GetMapping("/members")
-    public String list(Model model){
+    public String list(Model model, HttpSession session){
         List<Member> members=memberService.findMembers();
         model.addAttribute("members", members);
+        System.out.println("session access token"+session.getAttribute("access_Token"));
         return"members/memberList";
     }
 
@@ -63,6 +63,59 @@ public class MemberController {
     public String kakaoLogin(Model model){
         return "members/kakao";
     }
+
+
+    //카카오 회원가입
+    @GetMapping("/api/kakao")
+    public void createKakaoMember(@RequestParam String code, HttpSession session) {
+        String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
+        JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
+        Long id;
+
+        Member member = new Member();
+
+        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
+        boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
+        String email = "";
+        String name = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
+        if (hasEmail) {
+            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            member.setEmail(email);
+            session.setAttribute("email", email);
+        }
+
+
+        member.setKakao_id(kakao_id);
+        member.setName(name);
+
+        try {   //카카오 아이디로 회원이 존재하는지 조회
+            Member findMember = memberService.findMemberBykakaoId(kakao_id);
+            id=findMember.getMember_id();           //회원가입이 돼있으면 회원가입을 따로 안한다
+        }
+        catch(Exception e){ //회원가입이 안돼있을때
+            id = memberService.join(member);    //회원가입을 한다
+        }
+
+        session.setAttribute("access_Token", kaKaoAccessToken);
+
+
+      //  return "redirect:/";
+
+    }
+
+
+
+
+    @RequestMapping(value="/members/logout")
+    public String logout(HttpSession session) {
+        String access_Token=(String)session.getAttribute("access_Token");
+        System.out.println("accessToken:"+access_Token);
+        memberService.kakaoLogout((String)session.getAttribute("access_Token"));;
+        session.removeAttribute("access_Token");
+        session.removeAttribute("userId");
+        return "home";
+    }
+
 
 
 
