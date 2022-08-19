@@ -27,7 +27,7 @@ public class PostApiController {
     private final MemberRepository memberRepository;
 
 
-    // 게시글 작성
+    // 게시글 작성.
     @PostMapping("/api/posts/create")
     public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request) {
 
