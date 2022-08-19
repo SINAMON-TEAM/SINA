@@ -1,16 +1,23 @@
 package mon.sinamon.api;
 
+import com.google.gson.JsonElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Address;
 import mon.sinamon.domain.Member;
 import mon.sinamon.service.MemberService;
+import mon.sinamon.service.UserService;
+import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Embedded;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -19,13 +26,105 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
+/*
+   // 카카오 코드 받기
+    @GetMapping("/api/kakao")
+    public String kakaoCallback(@RequestParam String code) {
+        System.out.println("code = " + code);
+        return code;
+        //  String kaKaoAccessToken = userService.getKaKaoAccessToken(code);
+        // userService.createKakaoUser(kaKaoAccessToken);
+    }
+
+
+    //카카오 회원가입
+    @PostMapping("/api/kakao")
+    public CreateMemberResponse2 createKakaoMember(@RequestParam String code, HttpSession session) {
+        String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
+        JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
+        Long id;
+
+        Member member = new Member();
+
+        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
+        boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
+        String email = "";
+        String name = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
+        if (hasEmail) {
+            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            member.setEmail(email);
+        }
+
+
+        member.setKakao_id(kakao_id);
+        member.setName(name);
+
+        try {   //카카오 아이디로 회원이 존재하는지 조회
+            Member findMember = memberService.findMemberBykakaoId(kakao_id);
+            id=findMember.getMember_id();           //회원가입이 돼있으면 회원가입을 따로 안한다
+        }
+        catch(Exception e){ //회원가입이 안돼있을때
+            id = memberService.join(member);    //회원가입을 한다
+        }
+        session.setAttribute("email", email);
+        session.setAttribute("access_Token", kaKaoAccessToken);
+
+
+        return new CreateMemberResponse2(id, email, kakao_id, name);
+    }
+
+
+
+    */
+
+    /*
+    //카카오 회원가입
+    @PostMapping("/api/kakao")
+    public CreateMemberResponse2 createKakaoMember(@RequestParam String code) {
+        String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
+        JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
+        Long id;
+
+        Member member = new Member();
+
+        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
+        boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
+        String email = "";
+        String name = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
+        if (hasEmail) {
+            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            member.setEmail(email);
+        }
+
+
+        member.setKakao_id(kakao_id);
+        member.setName(name);
+
+        try {   //카카오 아이디로 회원이 존재하는지 조회
+            Member findMember = memberService.findMemberBykakaoId(kakao_id);
+            id=findMember.getMember_id();           //회원가입이 돼있으면 회원가입을 따로 안한다
+            System.out.println("check1");
+        }
+        catch(Exception e){ //회원가입이 안돼있을때
+            id = memberService.join(member);    //회원가입을 한다
+            System.out.println("check2");
+        }
+
+
+        return new CreateMemberResponse2(id, email, kakao_id, name);
+    }
+*/
+
+
+
+
     // 회원가입
     @PostMapping("/api/members/create")
     public CreateMemberResponse createMember(@RequestBody @Valid CreateMemberRequest request) {
 
         // request에서 받은 회원정보를 member 객체로 생성
         Member member = new Member();
-        member.setId(request.getId());
+        member.setKakao_id(request.getKakao_id());
         member.setPassword(request.getPassword());
         member.setName(request.getName());
         member.setPhone(request.getPhone());
@@ -38,15 +137,13 @@ public class MemberApiController {
     }
 
 
-
     // id값으로 회원 조회
     @GetMapping("/api/members/{id}") //id값을 url에서 받아와 인자로 활용
     public MemberDto getMemberById(@PathVariable Long id) {
         Member m = memberService.findMemberById(id);
-        MemberDto memberDto = new MemberDto(m.getName(),m.getPhone(),m.getNickname(),m.getAddress().getAddress(),m.getAddress().getZipcode());
+        MemberDto memberDto = new MemberDto(m.getName(), m.getPhone(), m.getNickname(), m.getAddress().getAddress(), m.getAddress().getZipcode());
         return memberDto;
     }
-
 
 
     // 전체 회원 조회
@@ -54,20 +151,13 @@ public class MemberApiController {
     public Result getAllMembers() {
         List<Member> findMembers = memberService.findMembers(); // 회원 목록을 List로 받아옴
         List<MemberDto> collect = findMembers.stream()
-                .map(m -> new MemberDto(m.getName(),m.getPhone(),m.getNickname(),m.getAddress().getAddress(),m.getAddress().getZipcode()))
+                .map(m -> new MemberDto(m.getName(), m.getPhone(), m.getNickname(), m.getAddress().getAddress(), m.getAddress().getZipcode()))
                 .collect(Collectors.toList()); //Member -> DTO 변환
         return new Result(collect.size(), collect);
     }
 
 
-
-
-
     /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
-
-
-
-
 
 
     // Json 형식으로 반환을 할 때 Json Array를 그대로 반환하기보다는 이렇게 Result라는 틀로 한번 감싸서 반환하는 것이 유연성에 도움이 된다고 함
@@ -94,7 +184,7 @@ public class MemberApiController {
     // 회원 가입 api 함수가 인자로 받을 클래스
     @Data
     static class CreateMemberRequest {
-        private String id;
+        private Long kakao_id;
         private String password;
         private String name;
         private String phone;
@@ -107,9 +197,24 @@ public class MemberApiController {
     @Data
     static class CreateMemberResponse {
         private Long id;
+
         public CreateMemberResponse(Long id) {
             this.id = id;
         }
     }
 
+    @Data
+    static class CreateMemberResponse2 {
+        private Long id;
+        private String email;
+        private Long kakao_id;
+        private String name;
+        public CreateMemberResponse2(Long id, String email, Long kakao_id, String name) {
+
+            this.id = id;
+            this.email=email;
+            this.kakao_id=kakao_id;
+            this.name=name;
+        }
+    }
 }

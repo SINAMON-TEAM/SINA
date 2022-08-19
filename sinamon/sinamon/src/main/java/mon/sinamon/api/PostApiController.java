@@ -1,5 +1,6 @@
 package mon.sinamon.api;
 
+import com.google.gson.JsonElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -7,9 +8,11 @@ import mon.sinamon.domain.Member;
 import mon.sinamon.domain.Post;
 import mon.sinamon.repository.MemberRepository;
 import mon.sinamon.repository.PostRepository;
+import mon.sinamon.service.MemberService;
 import mon.sinamon.service.PostService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,15 +27,23 @@ public class PostApiController {
     private final PostService postService;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
 
     // 게시글 작성
     @PostMapping("/api/posts/create")
-    public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request) {
+    public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request, HttpSession session) {
+
+        /*String access_Token=(String)session.getAttribute("access_Token");
+        JsonElement element = memberService.getJsonElement(access_Token);
+        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
+
+        Member findMember = memberService.findMemberBykakaoId(kakao_id);
+        */
 
         // request에서 받은 회원정보를 member 객체로 생성
         Post post = new Post();
-
+        //post.setMember(memberRepository.findOne(findMember.getMember_id()));
         post.setMember(memberRepository.findOne(request.getMember_id()));
         post.setType(request.getType());
         post.setTitle(request.getTitle());
