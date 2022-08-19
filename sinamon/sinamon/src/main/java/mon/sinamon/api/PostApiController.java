@@ -12,6 +12,9 @@ import mon.sinamon.service.MemberService;
 import mon.sinamon.service.PostService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -32,7 +35,7 @@ public class PostApiController {
 
     // 게시글 작성
     @PostMapping("/api/posts/create")
-    public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request, HttpSession session) {
+    public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request) {
 
         /*String access_Token=(String)session.getAttribute("access_Token");
         JsonElement element = memberService.getJsonElement(access_Token);
@@ -40,6 +43,7 @@ public class PostApiController {
 
         Member findMember = memberService.findMemberBykakaoId(kakao_id);
         */
+
 
         // request에서 받은 회원정보를 member 객체로 생성
         Post post = new Post();

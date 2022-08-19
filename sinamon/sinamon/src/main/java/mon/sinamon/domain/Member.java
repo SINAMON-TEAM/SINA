@@ -1,6 +1,7 @@
 package mon.sinamon.domain;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
+@RequiredArgsConstructor
 public class Member {
 
     @Id @GeneratedValue
@@ -21,6 +23,7 @@ public class Member {
     private String password;
     private String phone;
     private String email;
+    //private String username;
 
     @Embedded
     private Address address;
@@ -29,6 +32,8 @@ public class Member {
     private List<Post> posts = new ArrayList<>();
 
 
-
-
+    /*public Member(String username, String password) {
+        this.password = password;
+        this.username = username;
+    }*/
 }
