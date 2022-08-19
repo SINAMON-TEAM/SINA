@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Member;
 import mon.sinamon.domain.Post;
+import mon.sinamon.domain.PromiseStatus;
 import mon.sinamon.repository.MemberRepository;
 import mon.sinamon.repository.PostRepository;
 import mon.sinamon.service.MemberService;
@@ -44,17 +45,12 @@ public class PostApiController {
 
         // request에서 받은 회원정보를 member 객체로 생성
         Post post = new Post();
-        //post.setMember(memberRepository.findOne(findMember.getMember_id()));
         post.setMember(memberRepository.findOne(request.getMember_id()));
         post.setType(request.getType());
         post.setTitle(request.getTitle());
         post.setText(request.getText());
-        post.setPost_date(LocalDateTime.now());
         post.setPromise_time(request.getPromise_time());
         post.setMax_people(request.getMax_people());
-        post.setNow_people(request.getNow_people());
-        post.setView(request.getView());
-        post.setLike_count(request.getLike_count());
 
 
         Long id = postService.join(post);
@@ -77,7 +73,8 @@ public class PostApiController {
     @GetMapping("/api/posts/findbymember/{member_id}") // url에서 id값을 받아 인자로 활용
     public List<PostDto> getPostByMemberId(@PathVariable Long member_id) {
 
-        List<Post> posts = postRepository.findByMemberId(member_id);
+        //List<Post> posts = postRepository.findByMemberId(member_id);
+        List<Post> posts = postService.findPostByMemberId(member_id);
         List<PostDto> result = posts.stream()
                 .map(p -> new PostDto(p))
                 .collect(Collectors.toList());
@@ -116,6 +113,9 @@ public class PostApiController {
 
 
 
+
+
+
     /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
 
 
@@ -142,6 +142,9 @@ public class PostApiController {
         private int now_people;
         private int view;
         private int like_count;
+        private Long member_id2;
+        private Long member_id3;
+        private Long member_id4;
 
         public PostDto(Post post) {
             id = post.getId();
@@ -155,6 +158,11 @@ public class PostApiController {
             now_people=post.getNow_people();
             view = post.getView();
             like_count = post.getLike_count();
+
+            member_id2=Long.valueOf(0);
+            member_id3=Long.valueOf(0);
+            member_id4=Long.valueOf(0);
+
         }
     }
 //
@@ -172,9 +180,6 @@ public class PostApiController {
             private String text;
             private String promise_time;
             private int max_people;
-            private int now_people;
-            private int view = 0;
-            private int like_count = 0;
         }
 
         // 게시글 작성 api가 반환하는 클래스, 지금은 id만 반환하도록 하고 있으나 이후에 수정 가능
