@@ -24,7 +24,4 @@ public class Chatroom {
     @JoinColumn(name="post_id")
     private Post post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="promise_id")
-    private Promise promise;
 }
