@@ -36,21 +36,28 @@ public class PostApiController {
     private final MemberService memberService;
 
 
+/*
+    @PostMapping("/posts/new")
+    public void create(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse){
+        HttpSession session=httpServletRequest.getSession();
+        Member member = (Member) session.getAttribute("member");
+        Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
+        System.out.println("memberBykakaoId:"+memberBykakaoId.getMember_id());
+    */
     // 게시글 작성.
     @PostMapping("/api/posts/create")
-    public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request) {
+    public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request,HttpServletRequest httpServletRequest) {
 
-        /*String access_Token=(String)session.getAttribute("access_Token");
-        JsonElement element = memberService.getJsonElement(access_Token);
-        Long kakao_id = element.getAsJsonObject().get("id").getAsLong();
 
-        Member findMember = memberService.findMemberBykakaoId(kakao_id);
-        */
-
+        HttpSession session=httpServletRequest.getSession();
+        Member member = (Member) session.getAttribute("member");
+        Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
 
         // request에서 받은 회원정보를 member 객체로 생성
         Post post = new Post();
-        post.setMember(memberRepository.findOne(request.getMember_id()));
+        post.setMember(memberBykakaoId);
         post.setType(request.getType());
         post.setTitle(request.getTitle());
         post.setText(request.getText());
