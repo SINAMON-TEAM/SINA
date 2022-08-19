@@ -21,10 +21,13 @@ public class Post {
     @NonNull
     private Member member;
 
-    private String type;
-    private String title;
-    private String text;
-    private LocalDateTime post_date;
+    private String type; // 배달음식인지 배송식품인지
+    private String title; // 제목
+    private String text; // 내용
+    private LocalDateTime post_date; // 작성 시간
+    private String promise_time; // 약속 시간
+    private int max_people = 2;
+    private int now_people = 1;
     private int view = 0;
     private int like_count = 0;
 }
