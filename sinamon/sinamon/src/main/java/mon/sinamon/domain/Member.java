@@ -18,15 +18,15 @@ public class Member {
 
     private Long kakao_id;
     private String name;
-    private String nickname;
-    private String major;
-    private String password;
-    private String phone;
+    private String nickname="default";
+    private String major="default";
+    private String password="default";
+    private String phone="default";
     private String email;
     //private String username;
 
     @Embedded
-    private Address address;
+    private Address address = new Address("default","default");
 
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
