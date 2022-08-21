@@ -1,5 +1,11 @@
 package mon.sinamon.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +39,10 @@ public class MessageController extends Socket {
 
     @OnMessage
     public void getMsg(Session recieveSession, String msg) {
+        System.out.println(msg);
+
+        Message message = new Gson().fromJson(msg, Message.class);
+
         for (int i = 0; i < session.size(); i++) {
             if (!recieveSession.getId().equals(session.get(i).getId())) {
                 try {
@@ -48,5 +58,13 @@ public class MessageController extends Socket {
                 }
             }
         }
+    }
+
+    @Getter @Setter
+    static class Message{
+        private String type;
+        private String text;
+        private int id;
+
     }
 }
