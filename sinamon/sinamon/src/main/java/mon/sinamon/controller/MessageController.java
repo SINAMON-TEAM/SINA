@@ -35,6 +35,7 @@ public class MessageController extends Socket {
         System.out.println("connected");
         session.add(newUser);
         System.out.println(newUser.getId());
+        System.out.println(newUser.toString());
     }
 
     @OnMessage
@@ -46,13 +47,13 @@ public class MessageController extends Socket {
         for (int i = 0; i < session.size(); i++) {
             if (!recieveSession.getId().equals(session.get(i).getId())) {
                 try {
-                    session.get(i).getBasicRemote().sendText("상대 : "+msg);
+                    session.get(i).getBasicRemote().sendText(""+recieveSession.getId()+" : "+msg);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }else{
                 try {
-                    session.get(i).getBasicRemote().sendText("나 : "+msg);
+                    session.get(i).getBasicRemote().sendText(""+recieveSession.getId()+" : "+msg);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
