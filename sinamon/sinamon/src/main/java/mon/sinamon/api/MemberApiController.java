@@ -86,7 +86,24 @@ public class MemberApiController {
     }
 
 
+    @PostMapping("/api/members/create")
+    public void createMember(@RequestBody @Valid CreateMemberRequest createMemberRequest,
+                                             HttpServletRequest httpServletRequest) {
 
+        HttpSession session=httpServletRequest.getSession();
+        Member member = (Member) session.getAttribute("member");
+        Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
+        String major=createMemberRequest.getMajor();
+        String address=createMemberRequest.getAddress();
+        String nickname=createMemberRequest.getNickname();
+
+        memberService.updateMember(memberBykakaoId.getKakao_id(),major,address,nickname);
+
+    }
+
+
+
+    /*
     // 회원가입
     @PostMapping("/api/members/create")
     public CreateMemberResponse createMember(@RequestBody @Valid CreateMemberRequest request) {
@@ -104,13 +121,13 @@ public class MemberApiController {
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
     }
-
+*/
 
     // id값으로 회원 조회
     @GetMapping("/api/members/{id}") //id값을 url에서 받아와 인자로 활용
     public MemberDto getMemberById(@PathVariable Long id) {
         Member m = memberService.findMemberById(id);
-        MemberDto memberDto = new MemberDto(m.getName(), m.getPhone(), m.getNickname(), m.getAddress().getAddress(), m.getAddress().getZipcode());
+        MemberDto memberDto = new MemberDto(m.getName(), m.getNickname(), m.getAddress(), m.getMajor());
         return memberDto;
     }
 
@@ -120,7 +137,7 @@ public class MemberApiController {
     public Result getAllMembers() {
         List<Member> findMembers = memberService.findMembers(); // 회원 목록을 List로 받아옴
         List<MemberDto> collect = findMembers.stream()
-                .map(m -> new MemberDto(m.getName(), m.getPhone(), m.getNickname(), m.getAddress().getAddress(), m.getAddress().getZipcode()))
+                .map(m -> new MemberDto(m.getName(), m.getNickname(), m.getAddress(), m.getMajor()))
                 .collect(Collectors.toList()); //Member -> DTO 변환
         return new Result(collect.size(), collect);
     }
@@ -143,13 +160,12 @@ public class MemberApiController {
     @AllArgsConstructor
     static class MemberDto {
         private String name;
-        private String phone;
         private String nickname;
         private String address;
-        private String zipcode;
-
+        private String major;
     }
 
+    /*
     // 회원 가입 api 함수가 인자로 받을 클래스
     @Data
     static class CreateMemberRequest {
@@ -160,6 +176,14 @@ public class MemberApiController {
         private String nickname;
         private String address;
         private String zipcode;
+    }
+    */
+
+    @Data
+    static class CreateMemberRequest {
+        private String major;
+        private String address;
+        private String nickname;
     }
 
     // 회원 가입 api가 반환하는 클래스, 지금은 id만 반환하도록 하고 있으나 이후에 수정 가능

@@ -233,5 +233,13 @@ public class MemberService {
         return userInfo;
     }
 
+    @Transactional
+    public void updateMember(Long kakaoId,String major, String address, String nickname){
+        Member findMember=memberRepository.findBykakaoId(kakaoId);
+        findMember.setMajor(major);
+        findMember.setAddress(address);
+        findMember.setNickname(nickname);
+    }
+
 
 }
