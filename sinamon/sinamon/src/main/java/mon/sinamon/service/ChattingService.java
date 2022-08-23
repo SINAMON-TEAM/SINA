@@ -2,8 +2,6 @@ package mon.sinamon.service;
 
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Chatting;
-import mon.sinamon.domain.Member;
-import mon.sinamon.domain.Post;
 import mon.sinamon.repository.ChattingRepository;
 import mon.sinamon.repository.PostRepository;
 import org.springframework.stereotype.Service;
@@ -35,5 +33,5 @@ public class ChattingService {
     public Chatting findChattingById(Long id) {return chattingRepository.findOne(id);}
 
     //회원 id 두개로 채팅 조회
-    public List<Chatting> findChattingByMemberId(Long id1, Long id2) {return chattingRepository.findByMemberId(id1, id2);}
+    public List<Chatting> findChattingByPostAndMember(Long id1, Long id2) {return chattingRepository.findByPostAndMember(id1, id2);}
 }

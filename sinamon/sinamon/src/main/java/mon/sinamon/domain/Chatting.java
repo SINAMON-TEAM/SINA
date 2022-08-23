@@ -18,12 +18,15 @@ public class Chatting {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id1")
-    private Member member1;
+    @JoinColumn(name="post_writer_id")
+    private Member post_writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id2")
-    private Member member2;
+    @JoinColumn(name="talker_id") //member_id2
+    private Member talker;
+
+    @Enumerated(EnumType.STRING)
+    private MessageSender sender; //[READY, COMP, CANCEL]
 
     private String message;
 
