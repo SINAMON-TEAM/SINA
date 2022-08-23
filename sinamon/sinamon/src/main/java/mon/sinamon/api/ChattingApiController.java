@@ -24,7 +24,7 @@ public class ChattingApiController {
     private final ChattingService chattingService;
 
 
-    // 채팅 메시지 생성
+    // 채팅 메시지 생성.
     @PostMapping("/api/chattings/create")
     public CreateChattingResponse createChatting(@RequestBody @Valid CreateChattingRequest request) {
 
@@ -55,7 +55,7 @@ public class ChattingApiController {
 
 
     // post id와 채팅 거는 사람 id로 채팅내역 조회
-    @GetMapping("/api/chattings/chatroom") // url에서 id값을 받아 인자로 활용
+    @GetMapping("/api/chattings/chatroom")
     public List<ChattingDto> getChattingById(@RequestParam("post") String post, @RequestParam("talker") String talker) {
 
 
