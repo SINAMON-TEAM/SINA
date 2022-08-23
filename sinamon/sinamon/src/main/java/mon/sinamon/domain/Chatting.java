@@ -14,6 +14,10 @@ public class Chatting {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="post_id")
+    private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id1")
     private Member member1;
 
@@ -23,5 +27,5 @@ public class Chatting {
 
     private String message;
 
-    private LocalDateTime message_time;
+    private LocalDateTime message_time = LocalDateTime.now();
 }
