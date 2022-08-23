@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -108,6 +109,15 @@ public class PostController {
                */
 
     }
+
+
+    @GetMapping("/posts")
+    public String list(Model model){
+        List<Post> posts=postService.findAllPosts();
+        model.addAttribute("posts", posts);
+        return"posts/postList";
+    }
+
 
 
     @Data

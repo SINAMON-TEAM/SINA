@@ -31,8 +31,6 @@ import static java.util.stream.Collectors.toList;
 public class PostApiController {
 
     private final PostService postService;
-    private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
     private final MemberService memberService;
 
 
@@ -64,6 +62,7 @@ public class PostApiController {
         post.setPromise_time(request.getPromise_time());
         post.setMax_people(request.getMax_people());
 
+        System.out.println("rere"+post.getId());
 
         Long id = postService.join(post);
         return new CreatePostResponse(id);
@@ -111,7 +110,7 @@ public class PostApiController {
     @GetMapping("/api/posts/{id}") // url에서 id값을 받아 인자로 활용
     public PostDto getPostById(@PathVariable Long id) {
 
-        Post post = postRepository.findOne(id);
+        Post post = postService.findPostById(id);
         PostDto result = new PostDto(post);
         return result;
     }

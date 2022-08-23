@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>글번호</th>
+                <th>작성자</th>
+                <th>서비스</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>정원</th>
+                <th>현재인원</th>
+                <th>채팅버튼</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${posts}">
+                <td th:text="${post.id}"></td>
+                <td th:text="${post.member.member_id}"></td>
+                <td th:text="${post.type}"></td>
+                <td th:text="${post.title}"></td>
+                <td th:text="${post.text}"></td>
+                <td th:text="${post.max_people}"></td>
+                <td th:text="${post.now_people}"></td>
+                <td><button type="button"
+                    th:post_id="${post.id}"
+                    th:onclick="sendMsg(this.getAttribute('post_id'))"
+                    th:text="채팅"></button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+<script th:inline="javascript">
+    function sendMsg(post_id) {
+        fetch("http://localhost:8080/api/posts/"+post_id)
+            .then((response) => response.json())
+            .then((data) => console.log(data));
+
+
+    }
+</script>
+</html>
