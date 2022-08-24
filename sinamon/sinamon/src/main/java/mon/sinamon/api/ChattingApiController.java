@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Chatting;
-import mon.sinamon.domain.Member;
-import mon.sinamon.domain.Post;
+import mon.sinamon.domain.MessageSender;
 import mon.sinamon.service.ChattingService;
 import mon.sinamon.service.MemberService;
 import mon.sinamon.service.PostService;
@@ -25,29 +24,18 @@ public class ChattingApiController {
     private final ChattingService chattingService;
 
 
-    // 채팅 메시지 생성
+    // 채팅 메시지 생성.
     @PostMapping("/api/chattings/create")
     public CreateChattingResponse createChatting(@RequestBody @Valid CreateChattingRequest request) {
-
-        System.out.println(request.getPost());
-        System.out.println(request.getMember1());
-        System.out.println(request.getMember2());
-        System.out.println(request.getMessage());
 
         Chatting chatting = new Chatting();
 
         chatting.setPost(postService.findPostById(request.getPost()));
-        chatting.setMember1(memberService.findMemberById(request.getMember1()));
-        chatting.setMember2(memberService.findMemberById(request.getMember2()));
+        chatting.setPost_writer(memberService.findMemberById(request.getPost_writer()));
+        chatting.setTalker(memberService.findMemberById(request.getTalker()));
+        chatting.setSender(request.getSender());
         chatting.setMessage(request.getMessage());
         chatting.setMessage_time(LocalDateTime.now());
-
-        System.out.println(chatting.getId());
-        System.out.println(chatting.getPost().getId());
-        System.out.println(chatting.getMember1().getMember_id());
-        System.out.println(chatting.getMember2().getMember_id());
-        System.out.println(chatting.getMessage());
-        System.out.println(chatting.getMessage_time());
 
         Long id = chattingService.join(chatting);
         return new CreateChattingResponse(id);
@@ -66,16 +54,16 @@ public class ChattingApiController {
 
 
 
-    // 두 멤버의 id로 채팅내역 조회
-    @GetMapping("/api/chattings/chatroom") // url에서 id값을 받아 인자로 활용
-    public List<ChattingDto> getChattingById(@RequestParam("member1") String member1, @RequestParam("member2") String member2) {
+    // post id와 채팅 거는 사람 id로 채팅내역 조회
+    @GetMapping("/api/chattings/chatroom")
+    public List<ChattingDto> getChattingById(@RequestParam("post") String post, @RequestParam("talker") String talker) {
 
 
-        Long id1=Long.valueOf(member1);
-        Long id2=Long.valueOf(member2);
+        Long post_id=Long.valueOf(post);
+        Long talker_id=Long.valueOf(talker);
 
 
-        List<Chatting> chattings = chattingService.findChattingByMemberId(id1, id2);
+        List<Chatting> chattings = chattingService.findChattingByPostAndMember(post_id, talker_id);
         List<ChattingDto> result = chattings.stream()
                 .map(c->new ChattingDto(c))
                 .collect(Collectors.toList());
@@ -93,16 +81,19 @@ public class ChattingApiController {
     static class ChattingDto{
         private Long id;
         private Long post_id;
-        private Long member1_id;
-        private Long member2_id;
+        private Long post_writer_id;
+        private Long talker_id;
+
+        private MessageSender sender;
         private String message;
         private LocalDateTime message_time;
 
         public ChattingDto(Chatting chatting){
             id = chatting.getId();
             post_id=chatting.getPost().getId();
-            member1_id=chatting.getMember1().getMember_id();
-            member2_id=chatting.getMember2().getMember_id();
+            post_writer_id =chatting.getPost_writer().getMember_id();
+            talker_id =chatting.getTalker().getMember_id();
+            sender=chatting.getSender();
             message=chatting.getMessage();
             message_time=chatting.getMessage_time();
 
@@ -117,9 +108,11 @@ public class ChattingApiController {
 
         private Long post;
 
-        private Long member1;
+        private Long post_writer;
 
-        private Long member2;
+        private Long talker;
+
+        private MessageSender sender;
 
         private String message;
     }

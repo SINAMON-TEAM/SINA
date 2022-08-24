@@ -13,17 +13,26 @@ public class Chatting {
     @Column(name="chatting_id")
     private Long id;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name="chatroom_id")
+//    private Chatroom chatroom;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="post_id")
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id1")
-    private Member member1;
+    @JoinColumn(name="post_writer_id")
+    private Member post_writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id2")
-    private Member member2;
+    @JoinColumn(name="talker_id") //member_id2
+    private Member talker;
+
+    @Enumerated(EnumType.STRING)
+    private MessageSender sender; //[POSTWRITER, TALKER]
+
+    // 읽었는지 여부 추가하기
 
     private String message;
 

@@ -2,7 +2,6 @@ package mon.sinamon.repository;
 
 
 import mon.sinamon.domain.Chatting;
-import mon.sinamon.domain.Post;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -34,12 +33,12 @@ public class ChattingRepository {
                 .getResultList();
     }
 
-    // id 두개로 Chatting 조회
-    public List<Chatting> findByMemberId(Long id1, Long id2){
+    // post id와 채팅 건 사람 id로 Chatting 조회
+    public List<Chatting> findByPostAndMember(Long post_id, Long talker_id){
         return em.createQuery(
-                "select c from Chatting c where c.member1.member_id = :id1 AND c.member2.member_id = :id2", Chatting.class)
-                .setParameter("id1", id1)
-                .setParameter("id2", id2)
+                "select c from Chatting c where c.post.id = :id1 AND c.talker.member_id = :id2", Chatting.class)
+                .setParameter("id1", post_id)
+                .setParameter("id2", talker_id)
                 .getResultList();
     }
 
