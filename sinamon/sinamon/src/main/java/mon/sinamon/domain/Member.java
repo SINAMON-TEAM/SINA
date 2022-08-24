@@ -20,13 +20,11 @@ public class Member {
     private String name;
     private String nickname="default";
     private String major="default";
-    private String password="default";
-    private String phone="default";
     private String email;
-    //private String username;
+    private String address;
 
-    @Embedded
-    private Address address = new Address("default","default");
+    //@Embedded
+  //  private Address address = new Address("default","default");
 
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();

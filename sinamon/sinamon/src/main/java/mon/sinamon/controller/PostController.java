@@ -110,6 +110,11 @@ public class PostController {
 
     }
 
+    @GetMapping("/posts/map")
+    public String mapTest(Model model){
+        return "posts/map";
+    }
+
 
     @GetMapping("/posts")
     public String list(Model model){
