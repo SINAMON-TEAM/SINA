@@ -109,6 +109,11 @@ public class PostController {
 
     }
 
+    @GetMapping("/posts/map")
+    public String mapTest(Model model){
+        return "posts/map";
+    }
+
 
     @Data
     static class CreatePostRequest {
