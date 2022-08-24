@@ -13,6 +13,10 @@ public class Chatting {
     @Column(name="chatting_id")
     private Long id;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name="chatroom_id")
+//    private Chatroom chatroom;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="post_id")
     private Post post;
@@ -26,7 +30,9 @@ public class Chatting {
     private Member talker;
 
     @Enumerated(EnumType.STRING)
-    private MessageSender sender; //[READY, COMP, CANCEL]
+    private MessageSender sender; //[POSTWRITER, TALKER]
+
+    // 읽었는지 여부 추가하기
 
     private String message;
 
