@@ -102,6 +102,30 @@ public class MemberApiController {
     }
 
 
+    @PostMapping("/api/members/create2")
+    public void createMember2(@RequestBody @Valid CreateMemberRequest createMemberRequest,
+                              HttpServletRequest httpServletRequest) {
+
+        HttpSession session=httpServletRequest.getSession();
+
+
+
+        String major=createMemberRequest.getMajor();
+        String address=createMemberRequest.getAddress();
+        String nickname=createMemberRequest.getNickname();
+
+        Member member=new Member();
+        member.setMajor(major);
+        member.setAddress(address);
+        member.setNickname(nickname);
+
+        Long member_id = memberService.join(member);
+        session.setAttribute("member_id", member_id);
+
+
+    }
+
+
 
     /*
     // 회원가입

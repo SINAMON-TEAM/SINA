@@ -13,9 +13,9 @@ public class Chatting {
     @Column(name="chatting_id")
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="chatroom_id")
-//    private Chatroom chatroom;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="chatroom_id")
+    private Chatroom chatroom;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="post_id")
