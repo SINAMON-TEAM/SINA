@@ -4,11 +4,13 @@ import com.google.gson.JsonElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import mon.sinamon.domain.Chatroom;
 import mon.sinamon.domain.Member;
 import mon.sinamon.domain.Post;
 import mon.sinamon.domain.PromiseStatus;
 import mon.sinamon.repository.MemberRepository;
 import mon.sinamon.repository.PostRepository;
+import mon.sinamon.service.ChatroomService;
 import mon.sinamon.service.MemberService;
 import mon.sinamon.service.PostService;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +34,7 @@ public class PostApiController {
 
     private final PostService postService;
     private final MemberService memberService;
+    private final ChatroomService chatroomService;
 
 
 /*
@@ -56,6 +59,28 @@ public class PostApiController {
         // request에서 받은 회원정보를 member 객체로 생성
         Post post = new Post();
         post.setMember(memberBykakaoId);
+        post.setType(request.getType());
+        post.setTitle(request.getTitle());
+        post.setText(request.getText());
+        post.setPromise_time(request.getPromise_time());
+        post.setMax_people(request.getMax_people());
+
+        System.out.println("rere"+post.getId());
+
+        Long id = postService.join(post);
+        return new CreatePostResponse(id);
+    }
+
+    @PostMapping("/api/posts/create2")
+    public CreatePostResponse createPost2(@RequestBody @Valid CreatePostRequest request,HttpServletRequest httpServletRequest) {
+
+
+        HttpSession session=httpServletRequest.getSession();
+        Long member_id=(Long)session.getAttribute("member_id");
+        Member findMember = memberService.findMemberById(member_id);
+        // request에서 받은 회원정보를 member 객체로 생성
+        Post post = new Post();
+        post.setMember(findMember);
         post.setType(request.getType());
         post.setTitle(request.getTitle());
         post.setText(request.getText());
@@ -191,6 +216,54 @@ public class PostApiController {
         return result;
     }
 
+    //게시글 번호랑 채팅건 회원 아이디 넘겨주는 api
+    @PostMapping("/api/posts/create/chatroom")
+    public void chatroomInfo(@RequestParam String post,HttpServletRequest httpServletRequest) {
+
+        Long post_id=Long.valueOf(post);
+        HttpSession session=httpServletRequest.getSession();
+        Member findMember = (Member) session.getAttribute("member");
+        Member member2 = memberService.findMemberBykakaoId(findMember.getKakao_id());
+
+        Post findPost = postService.findPostById(post_id);
+        Member member1 = findPost.getMember();
+
+        Chatroom chatroom=new Chatroom();
+        chatroom.setMember1(member1);
+        chatroom.setMember2(member2);
+        chatroom.setPost(findPost);
+
+        Long id = chatroomService.join(chatroom);
+
+
+
+        //return id;
+    }
+
+    @PostMapping("/api/posts/create/chatroom2")
+    public void chatroomInfo2(@RequestParam String post,HttpServletRequest httpServletRequest) {
+
+        Long post_id=Long.valueOf(post);
+        HttpSession session=httpServletRequest.getSession();
+        Long member_id=(Long)session.getAttribute("member_id");
+        Member member2=memberService.findMemberById(member_id);
+
+
+        Post findPost = postService.findPostById(post_id);
+        Member member1 = findPost.getMember();
+
+        Chatroom chatroom=new Chatroom();
+        chatroom.setMember1(member1);
+        chatroom.setMember2(member2);
+        chatroom.setPost(findPost);
+
+        Long id = chatroomService.join(chatroom);
+
+
+
+        //return id;
+    }
+
 
     /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
 
@@ -255,6 +328,17 @@ public class PostApiController {
         private String text;
         private String promise_time;
         private int max_people;
+    }
+
+    @Data
+    static class ChatroomInfo{
+       private Long post_id;
+       private Long member_id2;
+
+       public ChatroomInfo(Long post_id, Long member_id2){
+           this.post_id=post_id;
+           this.member_id2=member_id2;
+       }
     }
 
     // 게시글 작성 api가 반환하는 클래스, 지금은 id만 반환하도록 하고 있으나 이후에 수정 가능
