@@ -80,9 +80,23 @@ public class MemberApiController {
 
 
         session.setAttribute("member", member);
-        Cookie authCookie=new Cookie("kakao_id", Long.toString(kakao_id));
-        httpServletResponse.addCookie(authCookie);
+        session.setAttribute("access_token",kaKaoAccessToken);
 
+    }
+
+    @PostMapping("api/members/kakaologout")
+    public void logout(HttpServletRequest httpServletRequest, HttpServletResponse response) {
+        HttpSession session=httpServletRequest.getSession();
+        String access_Token=(String)session.getAttribute("access_token");
+        System.out.println("accessToken:"+access_Token);
+        memberService.kakaoLogout(access_Token);;
+        expireCookie(response);
+    }
+
+    private void expireCookie(HttpServletResponse response){
+        Cookie cookie=new Cookie("JSESSIONID",null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 
 

@@ -155,15 +155,19 @@ public class MemberController {
 
 
     @RequestMapping(value="/members/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session, HttpServletResponse response) {
         String access_Token=(String)session.getAttribute("access_Token");
         System.out.println("accessToken:"+access_Token);
         memberService.kakaoLogout((String)session.getAttribute("access_Token"));;
-        session.removeAttribute("access_Token");
-        session.removeAttribute("userId");
+        expireCookie(response);
         return "home";
     }
 
+    private void expireCookie(HttpServletResponse response){
+        Cookie cookie=new Cookie("JSESSIONID",null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+    }
 
 
 
