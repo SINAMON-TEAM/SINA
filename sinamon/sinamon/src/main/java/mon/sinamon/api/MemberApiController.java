@@ -31,13 +31,12 @@ public class MemberApiController {
 
 
    // 카카오 코드 받기
-    /*
-    @GetMapping("/api/kakao")
-    public String kakaoCallback(@RequestParam String code) {
-        System.out.println("code = " + code);
-        return code;
-        //  String kaKaoAccessToken = userService.getKaKaoAccessToken(code);
-        // userService.createKakaoUser(kaKaoAccessToken);
+
+/*
+    @GetMapping("/api/members/kakaologin")
+    public String kakaoCallback() {
+        https://kauth.kakao.com/oauth/authorize?client_id=5a839021b9022410f2f0a040060fc1dc&redirect_uri=http://localhost:8080/api/members/kakaologin&response_type=code
+        return "z ";
     }
 */
 
@@ -47,8 +46,10 @@ public class MemberApiController {
     //카카오 로그인,회원가입(api버전)
     @PostMapping("/api/members/kakaologin")
     public void createKakaoMember(@RequestParam String code
-            , HttpServletRequest httpServletRequest,
-                                  HttpServletResponse httpServletResponse) {
+            , HttpServletRequest httpServletRequest) {
+
+
+
         HttpSession session=httpServletRequest.getSession();
         String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
         JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
@@ -84,20 +85,19 @@ public class MemberApiController {
 
     }
 
+
+
     @PostMapping("api/members/kakaologout")
     public void logout(HttpServletRequest httpServletRequest, HttpServletResponse response) {
-        HttpSession session=httpServletRequest.getSession();
+        HttpSession session=httpServletRequest.getSession(false);
         String access_Token=(String)session.getAttribute("access_token");
-        System.out.println("accessToken:"+access_Token);
-        memberService.kakaoLogout(access_Token);;
-        expireCookie(response);
+        memberService.kakaoLogout(access_Token);
+        if(session!=null){
+            session.invalidate();
+        }
     }
 
-    private void expireCookie(HttpServletResponse response){
-        Cookie cookie=new Cookie("JSESSIONID",null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-    }
+
 
 
     @PostMapping("/api/members/create")

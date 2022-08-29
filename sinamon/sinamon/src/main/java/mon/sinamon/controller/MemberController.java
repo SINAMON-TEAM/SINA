@@ -111,13 +111,18 @@ public class MemberController {
     }
 */
 
+
+
 /*
     //카카오 회원가입(mvc버전)
     @GetMapping("/api/members/kakaologin")
-    public String createKakaoMember(@RequestParam String code, HttpSession session) {
+    public String createKakaoMember(@RequestParam String code, HttpServletRequest httpServletRequest) {
+        HttpSession session=httpServletRequest.getSession();
         String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
         JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
         Long id;
+
+
 
         Member member = new Member();
 
@@ -143,14 +148,14 @@ public class MemberController {
             id = memberService.join(member);    //회원가입을 한다
         }
 
-        session.setAttribute("access_Token", kaKaoAccessToken);
-
+        session.setAttribute("access_token", kaKaoAccessToken);
+        session.setAttribute("member",member);
 
         return "redirect:/";
 
     }
-*/
 
+*/
 
 
 

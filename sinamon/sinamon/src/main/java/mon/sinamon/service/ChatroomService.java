@@ -21,4 +21,8 @@ public class ChatroomService {
         return chatroom.getId();
     }
 
+    public Chatroom findChatroomById(Long id){
+        return chatroomRepository.findOne(id);
+    }
+
 }
