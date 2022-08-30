@@ -35,8 +35,8 @@ public class ChattingApiController {
 
         Chatting chatting = new Chatting();
 
-        //chatting.setPost(postService.findPostById(request.getPost()));
-        //chatting.setPost_writer(memberService.findMemberById(request.getPost_writer()));
+        chatting.setPost(postService.findPostById(request.getPost()));
+        chatting.setPost_writer(memberService.findMemberById(request.getPost_writer()));
         chatting.setTalker(memberService.findMemberById(request.getTalker()));
         chatting.setSender(request.getSender());
         chatting.setMessage(request.getMessage());
@@ -178,8 +178,8 @@ public class ChattingApiController {
 
         public ChattingDto(Chatting chatting){
             id = chatting.getId();
-          //  post_id=chatting.getPost().getId();
-           // post_writer_id =chatting.getPost_writer().getMember_id();
+            post_id=chatting.getPost().getId();
+            post_writer_id =chatting.getPost_writer().getMember_id();
             talker_id =chatting.getTalker().getMember_id();
             sender=chatting.getSender();
             message=chatting.getMessage();
