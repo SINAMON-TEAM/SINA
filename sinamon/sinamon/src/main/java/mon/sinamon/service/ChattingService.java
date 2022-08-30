@@ -34,4 +34,10 @@ public class ChattingService {
 
     //회원 id 두개로 채팅 조회
     public List<Chatting> findChattingByPostAndMember(Long id1, Long id2) {return chattingRepository.findByPostAndMember(id1, id2);}
+
+    //chatroom_id로 조회
+    public List<Chatting> findChattingByChatroomId(Long chatroom_id){
+        return chattingRepository.findByChatroomId(chatroom_id);
+    }
+
 }

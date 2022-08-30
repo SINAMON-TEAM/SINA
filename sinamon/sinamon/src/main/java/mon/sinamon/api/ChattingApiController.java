@@ -120,6 +120,19 @@ public class ChattingApiController {
     }
 
 
+    //채팅방 번호로 채팅조회
+    /*
+    @PostMapping("api/chatroom/chattings")
+    public List<Chatting> getChattingByChatroomId(Long chatroom_id){
+        List<Chatting> chattingByChatroomId = chattingService.findChattingByChatroomId(chatroom_id);
+
+
+        List<ChattingDto> result = chattings.stream()
+                .map(c -> new ChattingDto(c))
+                .collect(Collectors.toList());
+    }*/
+
+
     /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
 
 

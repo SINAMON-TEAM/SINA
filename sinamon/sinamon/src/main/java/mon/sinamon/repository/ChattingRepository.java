@@ -42,5 +42,13 @@ public class ChattingRepository {
                 .getResultList();
     }
 
+    // chatroom_id로 채팅 조회
+    public List<Chatting> findByChatroomId(Long chatroom_id){
+        return em.createQuery(
+                        "select c from Chatting c where c.chatroom_id = :chatroom_id", Chatting.class)
+                .setParameter("chatroom_id", chatroom_id)
+                .getResultList();
+    }
+
 
 }
