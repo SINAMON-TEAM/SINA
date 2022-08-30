@@ -163,6 +163,8 @@ public class MemberService {
 
 
     public void kakaoLogout(String access_Token) {
+        System.out.println("access_Token = " + access_Token);
+
         String reqURL = "https://kapi.kakao.com/v1/user/logout";
         try {
             URL url = new URL(reqURL);

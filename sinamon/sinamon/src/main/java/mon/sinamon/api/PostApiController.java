@@ -52,7 +52,11 @@ public class PostApiController {
     public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request,HttpServletRequest httpServletRequest) {
 
 
-        HttpSession session=httpServletRequest.getSession();
+        HttpSession session=httpServletRequest.getSession(false);
+        if(session==null){
+            System.out.println("로그인이 안됐습니다");
+        }
+
         Member member = (Member) session.getAttribute("member");
         Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
 
@@ -76,6 +80,7 @@ public class PostApiController {
 
 
         HttpSession session=httpServletRequest.getSession();
+
         Long member_id=(Long)session.getAttribute("member_id");
         Member findMember = memberService.findMemberById(member_id);
         // request에서 받은 회원정보를 member 객체로 생성

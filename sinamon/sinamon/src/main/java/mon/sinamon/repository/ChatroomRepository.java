@@ -2,7 +2,10 @@ package mon.sinamon.repository;
 
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Chatroom;
+
 import mon.sinamon.domain.Chatting;
+import mon.sinamon.domain.Post;
+
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -22,10 +25,13 @@ public class ChatroomRepository {
     }
 
 
-    // Chatroom id로 조회
+
+
+
     public Chatroom findOne(Long id){
         return em.find(Chatroom.class, id);
     }
+
 
     // post id와 채팅 건 사람 id로 Chatroom 조회
     public Chatroom findByPostAndMember(Long post_id, Long talker_id){
@@ -40,5 +46,4 @@ public class ChatroomRepository {
         }
         else return null;
     }
-
 }

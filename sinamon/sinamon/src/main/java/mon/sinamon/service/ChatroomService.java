@@ -24,12 +24,19 @@ public class ChatroomService {
         return chatroom.getId();
     }
 
+
     // 채팅방 id로 조회
     public Chatroom findChattingById(Long id) {return chatroomRepository.findOne(id);}
 
     //post id와 채팅 누른 사람 id로 채팅방 조회
     public Chatroom findChattingByPostAndMember(Long id1, Long id2) {
         return chatroomRepository.findByPostAndMember(id1, id2);}
+
+    public Chatroom findChatroomById(Long id){
+        return chatroomRepository.findOne(id);
+    }
+
+
 }
 
 

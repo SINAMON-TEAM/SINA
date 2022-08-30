@@ -17,13 +17,17 @@ public class Chatting {
     @JoinColumn(name="chatroom_id")
     private Chatroom chatroom;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="post_id")
     private Post post;
 
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="post_writer_id")
     private Member post_writer;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="talker_id") //member_id2

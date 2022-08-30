@@ -2,6 +2,7 @@ package mon.sinamon.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Chatroom;
 import mon.sinamon.domain.Chatting;
@@ -59,6 +60,7 @@ public class ChattingApiController {
     }
 
 
+
     // 채팅방 생성.
     @PostMapping("/api/chattings/chatroom/create")
     public CreateChatroomResponse createChatroom(@RequestBody @Valid CreateChatroomRequest request) {
@@ -72,6 +74,9 @@ public class ChattingApiController {
         return new CreateChatroomResponse(id);
     }
 
+
+
+/*
 
     // post id와 채팅 거는 사람 id로 채팅내역 조회
     @GetMapping("/api/chattings/chattingList")
@@ -95,7 +100,63 @@ public class ChattingApiController {
                 .collect(Collectors.toList());
         return result;
     }
+*/
 
+    // post id와 채팅 거는 사람 id로 채팅내역 조회
+    @GetMapping("/api/chattings/chatroom")
+    public List<ChattingDto> getChattingById(@RequestParam("post") String post, @RequestParam("talker") String talker) {
+
+
+
+
+        Long post_id=Long.valueOf(post);
+        Long talker_id=Long.valueOf(talker);
+
+
+        //내가 쓴 글인지 체크하는 로직
+
+
+        List<Chatting> chattings = chattingService.findChattingByPostAndMember(post_id, talker_id);
+        List<ChattingDto> result = chattings.stream()
+                .map(c->new ChattingDto(c))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+
+    // 채팅 메시지 저장
+    @PostMapping("/api/chattings/save/message")
+    public ChattingResponse saveMessage(@RequestBody @Valid ChattingRequest chattingRequest){
+        
+        Long talker_id= chattingRequest.getTalker_id();
+        Long chatroom_id=chattingRequest.getChatroom_id();
+        Member talker=memberService.findMemberById(talker_id);
+        Chatroom chatroom=chatroomService.findChatroomById(chatroom_id);
+
+        Chatting chatting=new Chatting();
+        chatting.setMessage(chattingRequest.message);
+        chatting.setSender(chattingRequest.getSender());
+        chatting.setChatroom(chatroom);
+        chatting.setTalker(talker);
+
+        Long chatting_id = chattingService.join(chatting);
+
+        return new ChattingResponse(chatting_id);
+
+    }
+
+
+    //채팅방 번호로 채팅조회
+    /*
+    @PostMapping("api/chatroom/chattings")
+    public List<Chatting> getChattingByChatroomId(Long chatroom_id){
+        List<Chatting> chattingByChatroomId = chattingService.findChattingByChatroomId(chatroom_id);
+
+
+        List<ChattingDto> result = chattings.stream()
+                .map(c -> new ChattingDto(c))
+                .collect(Collectors.toList());
+    }*/
 
 
 
@@ -141,7 +202,34 @@ public class ChattingApiController {
     /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
 
 
-    // 채팅 내역 조회용 DTO, 나중에 수정하거나 여러개 만들어서 사용할 것
+    // 채팅 메시지 저장할때 인자로 받을 클래스
+
+    @Data
+    static class ChattingRequest {
+
+
+        private Long talker_id;
+
+        private MessageSender sender;
+        private String message;
+        private Long chatroom_id;
+
+
+    }
+
+    // 채팅메시지 저장하고 반환할 클래스
+    @Data
+    static class ChattingResponse {
+        private Long id;
+
+        public ChattingResponse(Long id) {
+            this.id = id;
+        }
+    }
+
+
+
+
     @Data
     @AllArgsConstructor
     static class ChattingDto{
