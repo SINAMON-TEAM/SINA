@@ -37,5 +37,5 @@ public class PostService {
     //회원 id로 게시글 조회
     public List<Post> findPostByMemberId(Long id) {return postRepository.findByMemberId(id);}
 
-    //회원 id와와
+
 }

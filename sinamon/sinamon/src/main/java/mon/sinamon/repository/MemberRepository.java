@@ -20,6 +20,7 @@ public class MemberRepository {
         return member.getMember_id();
     }
 
+
     /* 원래 영상에는 이거던데 위에처럼 Long으로 한게 테스트때문인가?
     public void save(Member member) {
         em.persist(member);

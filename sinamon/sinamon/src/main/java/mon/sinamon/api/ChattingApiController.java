@@ -102,6 +102,7 @@ public class ChattingApiController {
     }
 
 
+
     // 채팅 메시지 저장
     @PostMapping("/api/chattings/save/message")
     public ChattingResponse saveMessage(@RequestBody @Valid ChattingRequest chattingRequest){
