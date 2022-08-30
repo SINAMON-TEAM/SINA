@@ -43,11 +43,19 @@ public class ChattingApiController {
         chatting.setSender(request.getSender());
         chatting.setMessage(request.getMessage());
         chatting.setMessage_time(LocalDateTime.now());
+        chatting.setChatroom(chatroomService.findChattingByPostAndMember(request.getPost(), request.getTalker()));
 
         Long id = chattingService.join(chatting);
         return new CreateChattingResponse(id);
     }
 
+    // 채팅 id로 단일 메시지 조회
+    @GetMapping("/api/chattings/{id}") //id값을 url에서 받아와 인자로 활용
+    public ChattingDto getChattingById(@PathVariable Long id) {
+        Chatting c = chattingService.findChattingById(id);
+        ChattingDto chattingDto = new ChattingDto(c);
+        return chattingDto;
+    }
 
     // 전체 채팅 내역 조회
     @GetMapping("/api/chattings")
@@ -75,33 +83,6 @@ public class ChattingApiController {
     }
 
 
-
-/*
-
-    // post id와 채팅 거는 사람 id로 채팅내역 조회
-    @GetMapping("/api/chattings/chattingList")
-    public List<ChattingDto> getChattingById(@RequestParam("post") String post, @RequestParam("talker") String talker) {
-
-
-        Long post_id=Long.valueOf(post);
-        Long talker_id=Long.valueOf(talker);
-
-        Long post_writer_id = postService.findPostById(post_id).getMember().getMember_id();
-
-        if(post_writer_id==talker_id){
-            System.out.println("당신이 쓴 글입니다");
-            return null;
-        }
-
-        List<Chatting> chattings = chattingService.findChattingByPostAndMember(post_id, talker_id);
-        System.out.println("ff"+chattings.get(0).getMessage());
-        List<ChattingDto> result = chattings.stream()
-                .map(c->new ChattingDto(c))
-                .collect(Collectors.toList());
-        return result;
-    }
-*/
-
     // post id와 채팅 거는 사람 id로 채팅내역 조회
     @GetMapping("/api/chattings/chatroom")
     public List<ChattingDto> getChattingById(@RequestParam("post") String post, @RequestParam("talker") String talker) {
@@ -111,9 +92,6 @@ public class ChattingApiController {
 
         Long post_id=Long.valueOf(post);
         Long talker_id=Long.valueOf(talker);
-
-
-        //내가 쓴 글인지 체크하는 로직
 
 
         List<Chatting> chattings = chattingService.findChattingByPostAndMember(post_id, talker_id);
@@ -138,6 +116,8 @@ public class ChattingApiController {
         chatting.setSender(chattingRequest.getSender());
         chatting.setChatroom(chatroom);
         chatting.setTalker(talker);
+        chatting.setPost(chatroom.getPost());
+        chatting.setPost_writer(chatroom.getMember1());
 
         Long chatting_id = chattingService.join(chatting);
 
@@ -146,24 +126,25 @@ public class ChattingApiController {
     }
 
 
-    //채팅방 번호로 채팅조회
-    /*
-    @PostMapping("api/chatroom/chattings")
-    public List<Chatting> getChattingByChatroomId(Long chatroom_id){
-        List<Chatting> chattingByChatroomId = chattingService.findChattingByChatroomId(chatroom_id);
 
+    // 채팅방 id로 채팅방 조회
+    @GetMapping("/api/chatroom/{id}") //id값을 url에서 받아와 인자로 활용
+    public ChatroomDto getChatroomById(@PathVariable String id) {
+        Long chatroom_id=Long.valueOf(id);
+        Chatroom c = chatroomService.findChatroomById(chatroom_id);
+        ChatroomDto chatroomDto = new ChatroomDto(c);
 
-        List<ChattingDto> result = chattings.stream()
-                .map(c -> new ChattingDto(c))
+        List<ChattingDto> chattings = chattingService.findChattingByChatroomId(chatroom_id).stream()
+                .map(d->new ChattingDto(d))
                 .collect(Collectors.toList());
-    }*/
-
-
+        chatroomDto.setChattings(chattings);
+        return chatroomDto;
+    }
 
 
     // post id와 채팅 거는 사람 id로 채팅방 조회 & 없으면 생성
-    @GetMapping("/api/chattings/chatroom")
-    public ChatroomDto getChatroomById(@RequestParam("post") String post, @RequestParam("talker") String talker, HttpServletRequest httpServletRequest) {
+    @GetMapping("/api/chatroom")
+    public ChatroomDto getChatroomById(@RequestParam("post") String post, HttpServletRequest httpServletRequest) {
 
         HttpSession session=httpServletRequest.getSession(false);
         if(session==null) System.out.println("xyxy no session");
@@ -176,7 +157,6 @@ public class ChattingApiController {
 
         Long post_id=Long.valueOf(post);
         Long post_writer_id = postService.findPostById(post_id).getMember().getMember_id();
-        //Long talker_id=Long.valueOf(talker);
         Long talker_id=findMember.getMember_id();
 
         if(post_writer_id==talker_id){
@@ -190,11 +170,11 @@ public class ChattingApiController {
         else{
             CreateChatroomRequest request = new CreateChatroomRequest(post_id,talker_id);
             CreateChatroomResponse newPost = createChatroom(request);
-            result = new ChatroomDto(chatroomService.findChattingById(newPost.getId()));
+            result = new ChatroomDto(chatroomService.findChatroomById(newPost.getId()));
 
         }
-        return result;
 
+        return getChatroomById(chatroom.getId().toString());
     }
 
 
@@ -234,19 +214,12 @@ public class ChattingApiController {
     @AllArgsConstructor
     static class ChattingDto{
         private Long id;
-        private Long post_id;
-        private Long post_writer_id;
-        private Long talker_id;
-
         private MessageSender sender;
         private String message;
         private LocalDateTime message_time;
 
         public ChattingDto(Chatting chatting){
             id = chatting.getId();
-            post_id=chatting.getPost().getId();
-            post_writer_id =chatting.getPost_writer().getMember_id();
-            talker_id =chatting.getTalker().getMember_id();
             sender=chatting.getSender();
             message=chatting.getMessage();
             message_time=chatting.getMessage_time();
@@ -292,11 +265,14 @@ public class ChattingApiController {
         private Long post_writer_id;
         private Long talker_id;
 
+        private List<ChattingDto> chattings;
+
         public ChatroomDto(Chatroom chatroom){
             id=chatroom.getId();
             post_id=chatroom.getPost().getId();
             post_writer_id=chatroom.getMember1().getMember_id();
             talker_id=chatroom.getMember2().getMember_id();
+      //      chattings=chatroom.getChattings();
 
         }
 
