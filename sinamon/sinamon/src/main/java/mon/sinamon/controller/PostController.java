@@ -1,26 +1,19 @@
 package mon.sinamon.controller;
 
-import com.google.gson.JsonElement;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import mon.sinamon.domain.Address;
 import mon.sinamon.domain.Member;
 import mon.sinamon.domain.Post;
 import mon.sinamon.service.MemberService;
 import mon.sinamon.service.PostService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller

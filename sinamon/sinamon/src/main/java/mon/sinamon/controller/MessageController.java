@@ -32,10 +32,8 @@ public class MessageController extends Socket {
 
     @OnOpen
     public void open(Session newUser) {
-        System.out.println("connected");
         session.add(newUser);
-        System.out.println(newUser.getId());
-        System.out.println(newUser.toString());
+        System.out.println("connected : " + newUser.getId());
     }
 
     @OnMessage
