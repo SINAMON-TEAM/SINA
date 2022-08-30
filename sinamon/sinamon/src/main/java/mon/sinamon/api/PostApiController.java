@@ -310,6 +310,25 @@ public class PostApiController {
     }
 
 
+    //게시글 삭제하기
+    @PostMapping("/api/posts/{id}/remove")
+    public void removePostById(@PathVariable Long id){
+        Post postById = postService.findPostById(id);
+        postService.removePost(postById);
+    }
+
+    //게시글 수정하기
+    @PostMapping("/api/posts/{id}/update")
+    public void updatePostById(@PathVariable Long id, @RequestBody @Valid UpdatePostRequest updatePostRequest){
+        Post postById = postService.findPostById(id);
+        String promise_time = updatePostRequest.getPromise_time();
+        String title = updatePostRequest.getTitle();
+        String text = updatePostRequest.getText();
+        String type = updatePostRequest.getType();
+        postService.updatePost(postById,promise_time,title,text,type);
+    }
+
+
     /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
 
 
@@ -373,6 +392,16 @@ public class PostApiController {
         private String text;
         private String promise_time;
         private int max_people;
+    }
+
+    // 게시글 수정정 api 함수가 인자 받을 클래스
+    @Data
+    @AllArgsConstructor
+    static class UpdatePostRequest {
+        private String type;
+        private String title;
+        private String text;
+        private String promise_time;
     }
 
     @Data

@@ -1,6 +1,7 @@
 package mon.sinamon.service;
 
 import lombok.RequiredArgsConstructor;
+import mon.sinamon.domain.Likes;
 import mon.sinamon.domain.Member;
 import mon.sinamon.domain.Post;
 import mon.sinamon.repository.PostRepository;
@@ -41,6 +42,21 @@ public class PostService {
     @Transactional
     public void updateViewCount(Post post, int view_count){
         post.setView(view_count);
+    }
+
+    //좋아요 목록 삭제
+    @Transactional
+    public void removePost(Post post){
+        postRepository.remove(post);
+    }
+
+    //게시글 수정
+    @Transactional
+    public void updatePost(Post post,String promise_time, String title, String text, String type){
+        post.setPromise_time(promise_time);
+        post.setTitle(title);
+        post.setText(text);
+        post.setType(type);
     }
 
 
