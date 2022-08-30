@@ -37,5 +37,12 @@ public class PostService {
     //회원 id로 게시글 조회
     public List<Post> findPostByMemberId(Long id) {return postRepository.findByMemberId(id);}
 
+    //게시글 조회수 증가시키기
+    @Transactional
+    public void updateViewCount(Post post, int view_count){
+        post.setView(view_count);
+    }
+
+
 
 }

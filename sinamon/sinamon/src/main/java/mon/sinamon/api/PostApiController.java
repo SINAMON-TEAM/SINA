@@ -140,6 +140,10 @@ public class PostApiController {
     public PostDto getPostById(@PathVariable Long id) {
 
         Post post = postService.findPostById(id);
+
+        //조회수 증가
+        postService.updateViewCount(post,post.getView()+1);
+
         PostDto result = new PostDto(post);
         return result;
     }
