@@ -51,6 +51,8 @@ public class PostRepository {
 
 
 
+
+
     ///////////////////////////////////////////////////////
     //오류나는 부분
     public List<Post> findAllWithMember() {

@@ -4,13 +4,11 @@ import com.google.gson.JsonElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import mon.sinamon.domain.Chatroom;
-import mon.sinamon.domain.Member;
-import mon.sinamon.domain.Post;
-import mon.sinamon.domain.PromiseStatus;
+import mon.sinamon.domain.*;
 import mon.sinamon.repository.MemberRepository;
 import mon.sinamon.repository.PostRepository;
 import mon.sinamon.service.ChatroomService;
+import mon.sinamon.service.LikeService;
 import mon.sinamon.service.MemberService;
 import mon.sinamon.service.PostService;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +33,7 @@ public class PostApiController {
     private final PostService postService;
     private final MemberService memberService;
     private final ChatroomService chatroomService;
+    private final LikeService likeService;
 
 
 /*
@@ -144,6 +143,43 @@ public class PostApiController {
         PostDto result = new PostDto(post);
         return result;
     }
+
+    // 게시글 좋아요 누르기
+    @PostMapping("/api/posts/{id}/like") // url에서 id값을 받아 인자로 활용
+    public void pressLike(@PathVariable Long id, HttpServletRequest httpServletRequest ){
+        HttpSession session=httpServletRequest.getSession(false);
+        if(session==null){
+            System.out.println("로그인이 안됐습니다");
+        }
+
+        Member member = (Member) session.getAttribute("member");
+        Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
+
+        //게시글 좋아요 수 증가시키기
+        Post postById = postService.findPostById(id);
+        int like_count = postById.getLike_count();
+
+
+
+        //예전에 좋아요 한 상태인지 아닌지 체크
+        Likes findLikes = likeService.findLikesByPostAndMember(postById.getId(), memberBykakaoId.getMember_id());
+        Likes likes=new Likes();
+
+        if(findLikes==null){        //처음 좋아요를 눌렀으면 db에 저장하고 게시글 증가
+
+            likes.setMember(memberBykakaoId);
+            likes.setPost(postById);
+            likeService.join(likes);
+            likeService.updateLikeCount(postById,like_count+1);
+        }
+        else{       //좋아요를 두 번 누른거면 db에서 삭제
+            likeService.removeLike(findLikes);
+            likeService.updateLikeCount(postById,like_count-1);
+        }
+
+
+    }
+
 
 
     //약속에 인원 추가
@@ -355,6 +391,18 @@ public class PostApiController {
             this.id = id;
         }
     }
+
+
+    // 좋아요 눌렀을때 반환하는 클래스
+    @Data
+    static class PressLikeResponse {
+        private Long id;
+
+        public PressLikeResponse(Long id) {
+            this.id = id;
+        }
+    }
+
 
 
 }

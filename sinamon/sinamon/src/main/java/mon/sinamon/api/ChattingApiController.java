@@ -102,26 +102,7 @@ public class ChattingApiController {
     }
 */
 
-    // post id와 채팅 거는 사람 id로 채팅내역 조회
-    @GetMapping("/api/chattings/chatroom")
-    public List<ChattingDto> getChattingById(@RequestParam("post") String post, @RequestParam("talker") String talker) {
 
-
-
-
-        Long post_id=Long.valueOf(post);
-        Long talker_id=Long.valueOf(talker);
-
-
-        //내가 쓴 글인지 체크하는 로직
-
-
-        List<Chatting> chattings = chattingService.findChattingByPostAndMember(post_id, talker_id);
-        List<ChattingDto> result = chattings.stream()
-                .map(c->new ChattingDto(c))
-                .collect(Collectors.toList());
-        return result;
-    }
 
 
     // 채팅 메시지 저장
