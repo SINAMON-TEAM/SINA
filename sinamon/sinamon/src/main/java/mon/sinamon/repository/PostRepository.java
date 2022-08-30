@@ -48,6 +48,10 @@ public class PostRepository {
     }
 
 
+    public void remove(Post post){
+        em.remove(post);
+    }
+
 
 
 
