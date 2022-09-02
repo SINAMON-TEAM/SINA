@@ -43,29 +43,34 @@ public class PostApiController {
     public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request,HttpServletRequest httpServletRequest) {
 
 
-        HttpSession session=httpServletRequest.getSession(false);
-        if(session==null){
+        Member member=findMemberInSession(httpServletRequest);
+
+        if(member==null){
             System.out.println("로그인이 안됐습니다");
+            return null;
+        }
+        else{
+            Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
+
+            // request에서 받은 회원정보를 member 객체로 생성
+            Post post = new Post();
+            post.setMember(memberBykakaoId);
+            post.setType(request.getType());
+            post.setTitle(request.getTitle());
+            post.setText(request.getText());
+            post.setPromise_date(request.getPromise_date());
+            post.setPromise_start_time(request.getPromise_start_time());
+            post.setPromise_end_time(request.getPromise_end_time());
+            post.setMax_people(request.getMax_people());
+
+            System.out.println("rere"+post.getId());
+
+            Long id = postService.join(post);
+            return new CreatePostResponse(id);
         }
 
-        Member member = (Member) session.getAttribute("member");
-        Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
 
-        // request에서 받은 회원정보를 member 객체로 생성
-        Post post = new Post();
-        post.setMember(memberBykakaoId);
-        post.setType(request.getType());
-        post.setTitle(request.getTitle());
-        post.setText(request.getText());
-        post.setPromise_date(request.getPromise_date());
-        post.setPromise_start_time(request.getPromise_start_time());
-        post.setPromise_end_time(request.getPromise_end_time());
-        post.setMax_people(request.getMax_people());
 
-        System.out.println("rere"+post.getId());
-
-        Long id = postService.join(post);
-        return new CreatePostResponse(id);
     }
 
     @PostMapping("/api/posts/create2")
@@ -147,35 +152,38 @@ public class PostApiController {
     // 게시글 좋아요 누르기
     @PostMapping("/api/posts/{id}/like") // url에서 id값을 받아 인자로 활용
     public void pressLike(@PathVariable Long id, HttpServletRequest httpServletRequest ){
-        HttpSession session=httpServletRequest.getSession(false);
-        if(session==null){
+        Member member=findMemberInSession(httpServletRequest);
+
+        if(member==null){
             System.out.println("로그인이 안됐습니다");
+            return;
+        }
+        else{
+            Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
+
+            //게시글 좋아요 수 증가시키기
+            Post postById = postService.findPostById(id);
+            int like_count = postById.getLike_count();
+
+
+
+            //예전에 좋아요 한 상태인지 아닌지 체크
+            Likes findLikes = likeService.findLikesByPostAndMember(postById.getId(), memberBykakaoId.getMember_id());
+            Likes likes=new Likes();
+
+            if(findLikes==null){        //처음 좋아요를 눌렀으면 db에 저장하고 게시글 증가
+
+                likes.setMember(memberBykakaoId);
+                likes.setPost(postById);
+                likeService.join(likes);
+                likeService.updateLikeCount(postById,like_count+1);
+            }
+            else{       //좋아요를 두 번 누른거면 db에서 삭제
+                likeService.removeLike(findLikes);
+                likeService.updateLikeCount(postById,like_count-1);
+            }
         }
 
-        Member member = (Member) session.getAttribute("member");
-        Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
-
-        //게시글 좋아요 수 증가시키기
-        Post postById = postService.findPostById(id);
-        int like_count = postById.getLike_count();
-
-
-
-        //예전에 좋아요 한 상태인지 아닌지 체크
-        Likes findLikes = likeService.findLikesByPostAndMember(postById.getId(), memberBykakaoId.getMember_id());
-        Likes likes=new Likes();
-
-        if(findLikes==null){        //처음 좋아요를 눌렀으면 db에 저장하고 게시글 증가
-
-            likes.setMember(memberBykakaoId);
-            likes.setPost(postById);
-            likeService.join(likes);
-            likeService.updateLikeCount(postById,like_count+1);
-        }
-        else{       //좋아요를 두 번 누른거면 db에서 삭제
-            likeService.removeLike(findLikes);
-            likeService.updateLikeCount(postById,like_count-1);
-        }
 
 
     }
@@ -191,7 +199,7 @@ public class PostApiController {
         Post post = postService.findPostById(postId);
         Member member = memberService.findMemberById(memberId);
 
-        if(post.getPromist_status() != PromiseStatus.READY) return null;
+        if(post.getPromise_status() != PromiseStatus.READY) return null;
 
         ArrayList<Long> array = new ArrayList<Long>(); // 타입 지정
 
@@ -241,7 +249,7 @@ public class PostApiController {
             return null;
         }
 
-        if(post.getMax_people()==post.getNow_people()) post.setPromist_status(PromiseStatus.COMP);
+        if(post.getMax_people()==post.getNow_people()) post.setPromise_status(PromiseStatus.COMP);
 
         postService.join(post);
 
@@ -285,8 +293,8 @@ public class PostApiController {
             return null;
         }
 
-        if(post.getPromist_status()==PromiseStatus.COMP&&post.getMax_people()!=post.getNow_people())
-            post.setPromist_status(PromiseStatus.READY);
+        if(post.getPromise_status()==PromiseStatus.COMP&&post.getMax_people()!=post.getNow_people())
+            post.setPromise_status(PromiseStatus.READY);
 
         postService.join(post);
 
@@ -299,6 +307,7 @@ public class PostApiController {
     public void chatroomInfo(@RequestParam String post,HttpServletRequest httpServletRequest) {
 
         Long post_id=Long.valueOf(post);
+
         HttpSession session=httpServletRequest.getSession();
         Member findMember = (Member) session.getAttribute("member");
         Member member2 = memberService.findMemberBykakaoId(findMember.getKakao_id());
@@ -322,6 +331,7 @@ public class PostApiController {
     public void chatroomInfo2(@RequestParam String post,HttpServletRequest httpServletRequest) {
 
         Long post_id=Long.valueOf(post);
+
         HttpSession session=httpServletRequest.getSession();
         Long member_id=(Long)session.getAttribute("member_id");
         Member member2=memberService.findMemberById(member_id);
@@ -354,11 +364,12 @@ public class PostApiController {
     @PostMapping("/api/posts/{id}/update")
     public void updatePostById(@PathVariable Long id, @RequestBody @Valid UpdatePostRequest updatePostRequest){
         Post postById = postService.findPostById(id);
-        String promise_time = updatePostRequest.getPromise_time();
+        String promise_start_time = updatePostRequest.getPromise_start_time();
+        String promise_end_time= updatePostRequest.getPromise_end_time();
         String title = updatePostRequest.getTitle();
         String text = updatePostRequest.getText();
         String type = updatePostRequest.getType();
-        postService.updatePost(postById,promise_time,title,text,type);
+        postService.updatePost(postById,promise_start_time,promise_end_time,title,text,type);
     }
 
 
@@ -402,7 +413,7 @@ public class PostApiController {
             promise_end_time = post.getPromise_end_time();
             max_people = post.getMax_people();
             now_people = post.getNow_people();
-            promise_status = post.getPromist_status();
+            promise_status = post.getPromise_status();
             view = post.getView();
             like_count = post.getLike_count();
 
@@ -440,7 +451,8 @@ public class PostApiController {
         private String type;
         private String title;
         private String text;
-        private String promise_time;
+        private String promise_start_time;
+        private String promise_end_time;
     }
 
     @Data
@@ -473,6 +485,19 @@ public class PostApiController {
         public PressLikeResponse(Long id) {
             this.id = id;
         }
+    }
+
+
+    //세션으로부터 멤버 객체 가져오는 객체
+    public Member findMemberInSession(HttpServletRequest httpServletRequest){
+        HttpSession session=httpServletRequest.getSession(false);
+        if(session==null){
+            System.out.println("로그인이 안됐습니다");
+            return null;
+        }
+        Member member = (Member) session.getAttribute("member");
+        Member memberBykakaoId =memberService.findMemberBykakaoId(member.getKakao_id());
+        return memberBykakaoId;
     }
 
 

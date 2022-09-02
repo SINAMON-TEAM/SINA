@@ -26,7 +26,7 @@ public class Post {
     private List<Chatroom> chatrooms = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private PromiseStatus promist_status = PromiseStatus.READY; //[READY, COMP, CANCEL]
+    private PromiseStatus promise_status = PromiseStatus.READY; //[READY, COMP, CANCEL]
 
     private String type; // 배달음식인지 배송식품인지
     private String title; // 제목

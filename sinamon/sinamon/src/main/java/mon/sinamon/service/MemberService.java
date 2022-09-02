@@ -4,11 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import mon.sinamon.domain.Address;
 import mon.sinamon.domain.Member;
 import mon.sinamon.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -235,13 +238,31 @@ public class MemberService {
         return userInfo;
     }
 
+
+    //사용자의 주소, 학과, 닉네임을 저장
     @Transactional
-    public void updateMember(Long kakaoId,String major, String address, String nickname){
+    public void updateMember(Long kakaoId,String major, String addresss, String nickname){
         Member findMember=memberRepository.findBykakaoId(kakaoId);
         findMember.setMajor(major);
+        Address address=new Address(addresss);
         findMember.setAddress(address);
         findMember.setNickname(nickname);
     }
+
+
+    //사용자의 위도와 경도를 저장
+    @Transactional
+    public void updateXY(Member member,String X, String Y){
+        Address address=member.getAddress();
+        String addresss=address.getAddress();
+        String zipcode=address.getZipcode();
+
+        Address newaddress=new Address(addresss,X,Y,zipcode);
+        member.setAddress(newaddress);
+    }
+
+
+
 
 
 }
