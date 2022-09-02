@@ -150,7 +150,7 @@ public class PostApiController {
     }
 
     // 게시글 좋아요 누르기
-    @PostMapping("/api/posts/{id}/like") // url에서 id값을 받아 인자로 활용
+   @PostMapping("/api/posts/{id}/like") // url에서 id값을 받아 인자로 활용
     public void pressLike(@PathVariable Long id, HttpServletRequest httpServletRequest ){
         Member member=findMemberInSession(httpServletRequest);
 
@@ -187,6 +187,7 @@ public class PostApiController {
 
 
     }
+
 
 
 
