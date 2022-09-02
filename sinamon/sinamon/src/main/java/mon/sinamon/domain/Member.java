@@ -21,10 +21,12 @@ public class Member {
     private String nickname="default";
     private String major="default";
     private String email;
-    private String address;
+    //private String address;
 
-    //@Embedded
-  //  private Address address = new Address("default","default");
+    @Embedded
+    private Address address = new Address("default","default","default","default");
+   // private Address address;
+
 
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();

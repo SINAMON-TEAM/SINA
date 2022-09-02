@@ -104,14 +104,20 @@ public class MemberApiController {
     public void createMember(@RequestBody @Valid CreateMemberRequest createMemberRequest,
                                              HttpServletRequest httpServletRequest) {
 
-        HttpSession session=httpServletRequest.getSession();
-        Member member = (Member) session.getAttribute("member");
-        Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
-        String major=createMemberRequest.getMajor();
-        String address=createMemberRequest.getAddress();
-        String nickname=createMemberRequest.getNickname();
+        Member member=findMemberInSession(httpServletRequest);
+        if(member==null){
+            System.out.println("session is null");
+            return;
+        }
+        else{
+            Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
+            String major=createMemberRequest.getMajor();
+            String address=createMemberRequest.getAddress();
+            String nickname=createMemberRequest.getNickname();
 
-        memberService.updateMember(memberBykakaoId.getKakao_id(),major,address,nickname);
+            memberService.updateMember(memberBykakaoId.getKakao_id(),major,address,nickname);
+        }
+
 
     }
 
@@ -120,13 +126,17 @@ public class MemberApiController {
     public void createMember2(@RequestBody @Valid CreateMemberRequest createMemberRequest,
                               HttpServletRequest httpServletRequest) {
 
+
+
         HttpSession session=httpServletRequest.getSession();
 
 
 
         String major=createMemberRequest.getMajor();
-        String address=createMemberRequest.getAddress();
+        String address_s=createMemberRequest.getAddress();
         String nickname=createMemberRequest.getNickname();
+
+        Address address=new Address(address_s);
 
         Member member=new Member();
         member.setMajor(major);
@@ -165,7 +175,7 @@ public class MemberApiController {
     @GetMapping("/api/members/{id}") //id값을 url에서 받아와 인자로 활용
     public MemberDto getMemberById(@PathVariable Long id) {
         Member m = memberService.findMemberById(id);
-        MemberDto memberDto = new MemberDto(m.getName(), m.getNickname(), m.getAddress(), m.getMajor());
+        MemberDto memberDto = new MemberDto(m.getName(), m.getNickname(), m.getAddress().getAddress(), m.getMajor());
         return memberDto;
     }
 
@@ -175,13 +185,30 @@ public class MemberApiController {
     public Result getAllMembers() {
         List<Member> findMembers = memberService.findMembers(); // 회원 목록을 List로 받아옴
         List<MemberDto> collect = findMembers.stream()
-                .map(m -> new MemberDto(m.getName(), m.getNickname(), m.getAddress(), m.getMajor()))
+                .map(m -> new MemberDto(m.getName(), m.getNickname(), m.getAddress().getAddress(), m.getMajor()))
                 .collect(Collectors.toList()); //Member -> DTO 변환
         return new Result(collect.size(), collect);
     }
 
+    //프론트로 부터 받은 경도와 위도 db에 저장
+    @PostMapping("/api/members/address")
+    public void saveXY(@RequestParam String X, @RequestParam String Y, HttpServletRequest httpServletRequest){
+        
+        Member member=findMemberInSession(httpServletRequest);
+        if(member==null){
+            System.out.println("로그인이 안됐습니다");
+            return;
+        }
+        else{
+            memberService.updateXY(member,X,Y);
+        }
+        
+        
+    }
 
-    /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
+
+
+   /*******************************여기까지 api 함수 이 아래는 api 함수들이 쓰는 함수들*********************************/
 
 
     // Json 형식으로 반환을 할 때 Json Array를 그대로 반환하기보다는 이렇게 Result라는 틀로 한번 감싸서 반환하는 것이 유연성에 도움이 된다고 함
@@ -198,7 +225,7 @@ public class MemberApiController {
     @AllArgsConstructor
     static class MemberDto {
         private String name;
-        private String nickname;
+        private String nickname ;
         private String address;
         private String major;
     }
@@ -247,5 +274,18 @@ public class MemberApiController {
             this.kakao_id=kakao_id;
             this.name=name;
         }
+    }
+
+
+    //세션으로부터 멤버객체 가져오는 함수
+    public Member findMemberInSession(HttpServletRequest httpServletRequest){
+        HttpSession session=httpServletRequest.getSession(false);
+        if(session==null){
+            System.out.println("로그인이 안됐습니다");
+            return null;
+        }
+        Member member = (Member) session.getAttribute("member");
+        Member memberBykakaoId =memberService.findMemberBykakaoId(member.getKakao_id());
+        return memberBykakaoId;
     }
 }
