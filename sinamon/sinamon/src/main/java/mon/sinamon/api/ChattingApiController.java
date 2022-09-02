@@ -45,6 +45,8 @@ public class ChattingApiController {
         chatting.setMessage_time(LocalDateTime.now());
         chatting.setChatroom(chatroomService.findChattingByPostAndMember(request.getPost(), request.getTalker()));
 
+        System.out.println("getget " + request.getPost() + "  " + request.getTalker());
+
         Long id = chattingService.join(chatting);
         return new CreateChattingResponse(id);
     }
@@ -113,7 +115,7 @@ public class ChattingApiController {
         Chatroom chatroom=chatroomService.findChatroomById(chatroom_id);
 
         Chatting chatting=new Chatting();
-        chatting.setMessage(chattingRequest.message);
+        chatting.setMessage(chattingRequest.getMessage());
         chatting.setSender(chattingRequest.getSender());
         chatting.setChatroom(chatroom);
         chatting.setTalker(talker);
@@ -144,6 +146,7 @@ public class ChattingApiController {
 
 
     // post id와 채팅 거는 사람 id로 채팅방 조회 & 없으면 생성
+    // mvc버전은 PostController 클래스에 있음. 홈페이지에 적용되어있는 버전임
     @GetMapping("/api/chatroom")
     public ChatroomDto getChatroomById(@RequestParam("post") String post, HttpServletRequest httpServletRequest) {
 

@@ -40,9 +40,12 @@
 </body>
 <script th:inline="javascript">
     function sendMsg(post_id) {
+        var chattingdata
         fetch("http://localhost:8080/api/chatroom?post="+post_id)
             .then((response) => response.json())
-            .then((data) => console.log(data));
+            //.then((data) => console.log(data));
+            .then((data)=>chattingdata=data);
+            
 
 
     }

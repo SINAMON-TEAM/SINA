@@ -7,7 +7,6 @@ import org.springframework.lang.NonNull;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -32,8 +31,10 @@ public class Post {
     private String type; // 배달음식인지 배송식품인지
     private String title; // 제목
     private String text; // 내용
-    private LocalDateTime post_date = LocalDateTime.now(); // 작성 시간
-    private String promise_time; // 약속 시간
+    private LocalDateTime post_date = LocalDateTime.now(); // 작성 시간 //이걸 string으로 할지 이걸로 할지 고민좀 해봐야 함
+    private String promise_date; // 약속 날짜
+    private String promise_start_time; // 약속 시작 시간
+    private String promise_end_time; // 약속 끝 시간
     private int max_people = 2;
     private int now_people = 1;
 
@@ -51,4 +52,20 @@ public class Post {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="member_id4")
     private Member member4;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="member_id5")
+    private Member member5;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="member_id6")
+    private Member member6;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="member_id7")
+    private Member member7;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="member_id8")
+    private Member member8;
 }

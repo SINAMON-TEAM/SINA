@@ -1,30 +1,22 @@
 package mon.sinamon.api;
 
-import com.google.gson.JsonElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.*;
-import mon.sinamon.repository.MemberRepository;
-import mon.sinamon.repository.PostRepository;
 import mon.sinamon.service.ChatroomService;
 import mon.sinamon.service.LikeService;
 import mon.sinamon.service.MemberService;
 import mon.sinamon.service.PostService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequiredArgsConstructor
@@ -65,7 +57,9 @@ public class PostApiController {
         post.setType(request.getType());
         post.setTitle(request.getTitle());
         post.setText(request.getText());
-        post.setPromise_time(request.getPromise_time());
+        post.setPromise_date(request.getPromise_date());
+        post.setPromise_start_time(request.getPromise_start_time());
+        post.setPromise_end_time(request.getPromise_end_time());
         post.setMax_people(request.getMax_people());
 
         System.out.println("rere"+post.getId());
@@ -88,7 +82,9 @@ public class PostApiController {
         post.setType(request.getType());
         post.setTitle(request.getTitle());
         post.setText(request.getText());
-        post.setPromise_time(request.getPromise_time());
+        post.setPromise_date(request.getPromise_date());
+        post.setPromise_start_time(request.getPromise_start_time());
+        post.setPromise_end_time(request.getPromise_end_time());
         post.setMax_people(request.getMax_people());
 
         System.out.println("rere"+post.getId());
@@ -192,8 +188,10 @@ public class PostApiController {
 
         Long postId=Long.valueOf(postid);
         Long memberId=Long.valueOf(memberid);
-        Post post = postService.findPostById(Long.valueOf(postId));
-        Member member = memberService.findMemberById(Long.valueOf(memberId));
+        Post post = postService.findPostById(postId);
+        Member member = memberService.findMemberById(memberId);
+
+        if(post.getPromist_status() != PromiseStatus.READY) return null;
 
         ArrayList<Long> array = new ArrayList<Long>(); // 타입 지정
 
@@ -201,6 +199,11 @@ public class PostApiController {
         if(post.getMember2()!=null) array.add(post.getMember2().getMember_id());
         if(post.getMember3()!=null) array.add(post.getMember3().getMember_id());
         if(post.getMember4()!=null) array.add(post.getMember4().getMember_id());
+        if(post.getMember5()!=null) array.add(post.getMember5().getMember_id());
+        if(post.getMember6()!=null) array.add(post.getMember6().getMember_id());
+        if(post.getMember7()!=null) array.add(post.getMember7().getMember_id());
+        if(post.getMember8()!=null) array.add(post.getMember8().getMember_id());
+
         for(int i=0;i<array.size();i++){
             if(array.get(i)==member.getMember_id()){
                 System.out.println("error - duplicate");
@@ -210,17 +213,32 @@ public class PostApiController {
         }
 
 
-        if (post.getMember2() == null&&post.getMember().getMember_id()!=memberId&&post.getMax_people()>=2) {
+
+
+        if (post.getMember2() == null&&post.getMax_people()>=2) {
             post.setMember2(member);
             post.setNow_people(post.getNow_people() + 1);
-        } else if (post.getMember3() == null&&post.getMax_people()>=3&&post.getMember().getMember_id()!=memberId&&post.getMember2().getMember_id()!=memberId) {
+        } else if (post.getMember3() == null&&post.getMax_people()>=3) {
             post.setMember3(member);
             post.setNow_people(post.getNow_people() + 1);
-        } else if (post.getMember4() == null&&post.getMax_people()>=4&&post.getMember().getMember_id()!=memberId&&post.getMember2().getMember_id()!=memberId&&post.getMember3().getMember_id()!=memberId) {
+        } else if (post.getMember4() == null&&post.getMax_people()>=4) {
             post.setMember4(member);
+            post.setNow_people(post.getNow_people() + 1);
+        } else if (post.getMember5() == null&&post.getMax_people()>=5) {
+            post.setMember5(member);
+            post.setNow_people(post.getNow_people() + 1);
+        } else if (post.getMember6() == null&&post.getMax_people()>=6) {
+            post.setMember6(member);
+            post.setNow_people(post.getNow_people() + 1);
+        } else if (post.getMember7() == null&&post.getMax_people()>=7) {
+            post.setMember7(member);
+            post.setNow_people(post.getNow_people() + 1);
+        } else if (post.getMember8() == null&&post.getMax_people()>=8) {
+            post.setMember8(member);
             post.setNow_people(post.getNow_people() + 1);
         } else {
             System.out.println("error - people over");
+            return null;
         }
 
         if(post.getMax_people()==post.getNow_people()) post.setPromist_status(PromiseStatus.COMP);
@@ -236,20 +254,35 @@ public class PostApiController {
     @PostMapping("/api/posts/removemember")
     public PostDto removeMemberFromPromise(@RequestParam("postid") String postid, @RequestParam("memberid") String memberid) {
 
-        Post post = postService.findPostById(Long.valueOf(postid));
-        Member member = memberService.findMemberById(Long.valueOf(memberid));
+        Long postId=Long.valueOf(postid);
+        Long memberId=Long.valueOf(memberid);
+        Post post = postService.findPostById(postId);
+        Member member = memberService.findMemberById(memberId);
 
-        if (post.getMember2() != null && post.getMember2().getMember_id() == Long.valueOf(memberid)) {
+        if (post.getMember2() != null && post.getMember2().getMember_id() == memberId) {
             post.setMember2(null);
             post.setNow_people(post.getNow_people() - 1);
-        } else if (post.getMember3() != null && post.getMember3().getMember_id() == Long.valueOf(memberid)) {
+        } else if (post.getMember3() != null && post.getMember3().getMember_id() == memberId) {
             post.setMember3(null);
             post.setNow_people(post.getNow_people() - 1);
-        } else if (post.getMember4() != null && post.getMember4().getMember_id() == Long.valueOf(memberid)) {
+        } else if (post.getMember4() != null && post.getMember4().getMember_id() == memberId) {
             post.setMember4(null);
+            post.setNow_people(post.getNow_people() - 1);
+        } else if (post.getMember5() != null && post.getMember5().getMember_id() == memberId) {
+            post.setMember5(null);
+            post.setNow_people(post.getNow_people() - 1);
+        } else if (post.getMember6() != null && post.getMember6().getMember_id() == memberId) {
+            post.setMember6(null);
+            post.setNow_people(post.getNow_people() - 1);
+        } else if (post.getMember7() != null && post.getMember7().getMember_id() == memberId) {
+            post.setMember7(null);
+            post.setNow_people(post.getNow_people() - 1);
+        } else if (post.getMember8() != null && post.getMember8().getMember_id() == memberId) {
+            post.setMember8(null);
             post.setNow_people(post.getNow_people() - 1);
         } else {
             System.out.println("error - not removed");
+            return null;
         }
 
         if(post.getPromist_status()==PromiseStatus.COMP&&post.getMax_people()!=post.getNow_people())
@@ -326,7 +359,9 @@ public class PostApiController {
         private String title;
         private String text;
         private LocalDateTime post_date;
-        private String promise_time;
+        private String promise_date;
+        private String promise_start_time;
+        private String promise_end_time;
         private int max_people;
         private int now_people;
         private PromiseStatus promise_status;
@@ -343,7 +378,9 @@ public class PostApiController {
             title = post.getTitle();
             text = post.getText();
             post_date = post.getPost_date();
-            promise_time = post.getPromise_time();
+            promise_date = post.getPromise_date();
+            promise_start_time = post.getPromise_start_time();
+            promise_end_time = post.getPromise_end_time();
             max_people = post.getMax_people();
             now_people = post.getNow_people();
             promise_status = post.getPromist_status();
@@ -371,7 +408,9 @@ public class PostApiController {
         private String type;
         private String title;
         private String text;
-        private String promise_time;
+        private String promise_date;
+        private String promise_start_time;
+        private String promise_end_time;
         private int max_people;
     }
 
