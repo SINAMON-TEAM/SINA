@@ -109,6 +109,7 @@ public class MemberApiController {
             System.out.println("session is null");
             return;
         }
+
         else{
             Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
             String major=createMemberRequest.getMajor();
