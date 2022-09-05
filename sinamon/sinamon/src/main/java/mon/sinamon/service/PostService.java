@@ -53,7 +53,7 @@ public class PostService {
     //게시글 수정
     @Transactional
     public void updatePost(Post post,String promise_time, String title, String text, String type){
-        post.setPromise_time(promise_time);
+        post.setPromise_start_time(promise_time);
         post.setTitle(title);
         post.setText(text);
         post.setType(type);
