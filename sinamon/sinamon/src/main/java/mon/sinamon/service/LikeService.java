@@ -3,6 +3,7 @@ package mon.sinamon.service;
 import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Chatroom;
 import mon.sinamon.domain.Likes;
+import mon.sinamon.domain.Member;
 import mon.sinamon.domain.Post;
 import mon.sinamon.repository.LikeRepository;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LikeService {
     private final LikeRepository likeRepository;
+
 
 
     @Transactional
@@ -36,4 +38,6 @@ public class LikeService {
     public void removeLike(Likes likes){
         likeRepository.remove(likes);
     }
+
+
 }
