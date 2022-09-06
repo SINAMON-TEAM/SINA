@@ -107,6 +107,7 @@ public class MemberController {
 
 
 
+    /*
 
     //카카오 회원가입(mvc버전)
     @GetMapping("/api/members/kakaologin")
@@ -149,7 +150,7 @@ public class MemberController {
 
     }
 
-
+*/
 
 
 
