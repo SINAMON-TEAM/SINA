@@ -63,7 +63,7 @@ public class MemberService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=5a839021b9022410f2f0a040060fc1dc"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=http://localhost:8080/api/members/kakaologin"); // TODO 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=http://113.198.137.188:81/api/members/kakaologin"); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
