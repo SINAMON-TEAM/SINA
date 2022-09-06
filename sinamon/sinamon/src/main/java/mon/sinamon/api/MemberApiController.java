@@ -41,7 +41,7 @@ public class MemberApiController {
 */
 
 
-
+/*
 
     //카카오 로그인,회원가입(api버전)
     @PostMapping("/api/members/kakaologin")
@@ -85,7 +85,7 @@ public class MemberApiController {
 
     }
 
-
+*/
 
     @PostMapping("api/members/kakaologout")
     public void logout(HttpServletRequest httpServletRequest, HttpServletResponse response) {
