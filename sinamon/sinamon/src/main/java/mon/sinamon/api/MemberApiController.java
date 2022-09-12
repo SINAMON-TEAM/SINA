@@ -42,7 +42,6 @@ public class MemberApiController {
 
 
 /*
-
     //카카오 로그인,회원가입(api버전)
     @PostMapping("/api/members/kakaologin")
     public void createKakaoMember(@RequestParam String code
@@ -109,6 +108,7 @@ public class MemberApiController {
             System.out.println("session is null");
             return;
         }
+
         else{
             Member memberBykakaoId = memberService.findMemberBykakaoId(member.getKakao_id());
             String major=createMemberRequest.getMajor();
