@@ -85,7 +85,7 @@ public class MemberApiController {
 
     }
 
-*/
+
 
     @PostMapping("api/members/kakaologout")
     public void logout(HttpServletRequest httpServletRequest, HttpServletResponse response) {
@@ -97,7 +97,7 @@ public class MemberApiController {
         }
     }
 
-
+*/
 
 
     @PostMapping("/api/members/create")

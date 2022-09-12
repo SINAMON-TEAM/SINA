@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class MemberRepositoryTest {
-
+/*
     @Autowired MemberRepository memberRepository;
 
     @Test
@@ -31,4 +31,6 @@ public class MemberRepositoryTest {
         Assertions.assertThat(findMember.getMember_id()).isEqualTo(member.getMember_id());
 
     }
+    */
+
 }
