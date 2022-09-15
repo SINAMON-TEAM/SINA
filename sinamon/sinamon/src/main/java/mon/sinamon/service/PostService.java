@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import mon.sinamon.domain.Likes;
 import mon.sinamon.domain.Member;
 import mon.sinamon.domain.Post;
+import mon.sinamon.domain.PromiseStatus;
 import mon.sinamon.repository.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +60,14 @@ public class PostService {
         post.setText(text);
         post.setType(type);
     }
+
+    //게시글 약속상태 변경
+    @Transactional
+    public void updatePromiseStatus(Post post, PromiseStatus promise_status){
+        post.setPromise_status(promise_status);
+    }
+
+
 
 
 

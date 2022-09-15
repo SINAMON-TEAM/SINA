@@ -262,6 +262,24 @@ public class MemberService {
     }
 
 
+    //사용자의 esg_point, esg_level 수정
+    @Transactional
+    public void updateESG(Member member){
+        int esg_point=member.getEsg_point();
+        int esg_level=member.getEsg_level();
+
+        esg_point=(esg_point+50)%100;
+
+        if(esg_point==0){
+            esg_level+=1;
+        }
+
+        member.setEsg_level(esg_level);
+        member.setEsg_point(esg_point);
+
+
+    }
+
 
 
 
