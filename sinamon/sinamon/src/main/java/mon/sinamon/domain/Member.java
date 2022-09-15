@@ -21,7 +21,8 @@ public class Member {
     private String nickname="default";
     private String major="default";
     private String email;
-    //private String address;
+    private int esg_level=1;  //esg 레벨
+    private int esg_point=0;  //esg 포인트 (일단 100까지로하자)
 
     @Embedded
     private Address address = new Address("default","default","default","default","default","default");

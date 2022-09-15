@@ -303,6 +303,77 @@ public class PostApiController {
         return result;
     }
 
+
+    //약속 완료 api
+    @PostMapping("/api/promise/complete")
+    public void promiseComplete(@RequestParam String post){
+        Long post_id=Long.valueOf(post);
+        Post postById = postService.findPostById(post_id);
+
+        if(postById==null){     //만약 post테이블에 해당 post_id의 데이터가 존재하지 않을때
+            System.out.println("게시글이 존재하지 않습니다");
+            return;
+        }
+
+        int now_people= postById.getNow_people();
+
+        for(int i=1; i<=now_people; i++){       //현재 인원수 만큼 반복문을 돌며
+                                                //해당 약속 인원의 esg point, level를 늘려준다
+            System.out.println("check");
+            switch(i){
+                case 1:{
+                    Member member = postById.getMember();
+                    memberService.updateESG(member);
+                    break;
+                }
+                case 2:{
+                    Member member = postById.getMember2();
+                    memberService.updateESG(member);
+                    break;
+                }
+                case 3:{
+                    Member member = postById.getMember3();
+                    memberService.updateESG(member);
+                    break;
+                }
+                case 4:{
+                    Member member = postById.getMember4();
+                    memberService.updateESG(member);
+                    break;
+                }
+                case 5:{
+                    Member member = postById.getMember5();
+                    memberService.updateESG(member);
+                    break;
+                }
+                case 6:{
+                    Member member = postById.getMember6();
+                    memberService.updateESG(member);
+                    break;
+                }
+                case 7:{
+                    Member member = postById.getMember7();
+                    memberService.updateESG(member);
+                    break;
+                }
+                case 8:{
+                    Member member = postById.getMember8();
+                    memberService.updateESG(member);
+                    break;
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+        postService.updatePromiseStatus(postById,PromiseStatus.COMP);       //약속상태를 comp로 바꿔준다
+    }
+
     //게시글 번호랑 채팅건 회원 아이디 넘겨주는 api
     @PostMapping("/api/posts/create/chatroom")
     public void chatroomInfo(@RequestParam String post,HttpServletRequest httpServletRequest) {
