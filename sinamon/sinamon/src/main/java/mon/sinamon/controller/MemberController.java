@@ -57,10 +57,12 @@ public class MemberController {
     }
 
 
-    @GetMapping("/members/kakao")
-    public String kakaoLogin(Model model){
+    @GetMapping("api/members/kakaologinnn")
+    public String kakaoLogin(){
         return "members/kakao";
     }
+
+
 
 /*
     //카카오 회원가입(api버전)
@@ -107,11 +109,11 @@ public class MemberController {
 
 
 
-
+/*
 
     //카카오 회원가입(mvc버전)
     @GetMapping("/api/members/kakaologin")
-    public void createKakaoMember(@RequestParam String code, HttpServletRequest httpServletRequest) {
+    public void createKakaoMember(@RequestParam String code, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         HttpSession session=httpServletRequest.getSession();
         String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
         JsonElement element = memberService.getJsonElement(kaKaoAccessToken);
@@ -148,8 +150,11 @@ public class MemberController {
 
 
 
+
+        //return "redirect:/";
     }
 
+*/
 
 
 
