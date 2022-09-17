@@ -1,5 +1,6 @@
 package mon.sinamon.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Member {
     private int esg_level=1;  //esg 레벨
     private int esg_point=0;  //esg 포인트 (일단 100까지로하자)
 
+    @JsonIgnore
     @Embedded
     private Address address = new Address("default","default","default","default","default","default");
    // private Address address;

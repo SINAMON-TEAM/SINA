@@ -43,6 +43,9 @@ public class MemberService {
     //카카오 id값으로 조회
     public Member findMemberBykakaoId(Long kakao_id) {return memberRepository.findBykakaoId(kakao_id);}
 
+    //주소로 조회
+    public Member findMemberByAddress(String address) {return memberRepository.findByAddress(address);}
+
 
 
     public String getKaKaoAccessToken(String code){
@@ -63,7 +66,7 @@ public class MemberService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=5a839021b9022410f2f0a040060fc1dc"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=http://113.198.137.188:81/api/members/kakaologin"); // TODO 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=http://172.30.7.190:5500/SINAMON/HTML/login.html"); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();

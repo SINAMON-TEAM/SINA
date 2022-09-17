@@ -6,11 +6,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 @Controller
-@CrossOrigin("*") // 모든 요청에 접근 허용
 public class HomeController {
     @GetMapping("/")
-    public String hello(Model model) {
+    public String hello(HttpServletRequest httpServletRequest,Model model) {
+        HttpSession session=httpServletRequest.getSession();
         return "home";
     }
 

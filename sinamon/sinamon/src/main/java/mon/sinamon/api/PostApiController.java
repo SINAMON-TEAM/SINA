@@ -42,7 +42,7 @@ public class PostApiController {
     @PostMapping("/api/posts/create")
     public CreatePostResponse createPost(@RequestBody @Valid CreatePostRequest request,HttpServletRequest httpServletRequest) {
 
-
+/*
         Member member=findMemberInSession(httpServletRequest);
 
         if(member==null){
@@ -67,7 +67,26 @@ public class PostApiController {
 
             Long id = postService.join(post);
             return new CreatePostResponse(id);
-        }
+        }*/
+        long a=1;
+        Member memberBykakaoId = memberService.findMemberById(a);
+
+        // request에서 받은 회원정보를 member 객체로 생성
+        Post post = new Post();
+        post.setMember(memberBykakaoId);
+        post.setType(request.getType());
+        post.setTitle(request.getTitle());
+        post.setText(request.getText());
+        post.setPromise_date(request.getPromise_date());
+        post.setPromise_start_time(request.getPromise_start_time());
+        post.setPromise_end_time(request.getPromise_end_time());
+        post.setMax_people(request.getMax_people());
+        post.setPrice(request.getPrice());
+
+        System.out.println("rere"+post.getId());
+
+        Long id = postService.join(post);
+        return new CreatePostResponse(id);
 
 
 
@@ -98,8 +117,18 @@ public class PostApiController {
         return new CreatePostResponse(id);
     }
 
-
+/*
     // 전체 게시글 조회
+    @GetMapping("/api/posts")
+    public List<PostDto> getAllPost() {
+        List<Post> posts = postService.findAllPosts();
+        List<PostDto> result = posts.stream()
+                .map(p -> new PostDto(p))
+                .collect(Collectors.toList());
+        return result;
+    }
+*/
+    // 전체 게시글 조회(제목, 날짜, 시작시간, 끝시간, 닉네임, 인원수...)
     @GetMapping("/api/posts")
     public List<PostDto> getAllPost() {
         List<Post> posts = postService.findAllPosts();
@@ -148,6 +177,29 @@ public class PostApiController {
         PostDto result = new PostDto(post);
         return result;
     }
+
+    //도로명 주소로 게시글 조회
+    @PostMapping("/api/posts/address")
+    public Member getPostByAddress(@RequestBody @Valid ResponseAddress responseAddress){
+        //String address = responseAddress.getAddress();
+       // System.out.println("address = " + address);
+        String address = responseAddress.getAddress();
+        Member memberByAddress = memberService.findMemberByAddress(address);
+
+        return memberByAddress;
+
+        /*
+        //제목 날짜 시간 참여인원수 n분의 가격 글
+        List<Post> posts = postService.findPostByMemberMakingId(memberByAddress.getMember_id());
+
+        List<PostDto2> result = posts.stream()
+                .map(p -> new PostDto2(p))
+                .collect(Collectors.toList());
+
+         return result;*/
+
+    }
+
 
     // 게시글 좋아요 누르기
    @PostMapping("/api/posts/{id}/like") // url에서 id값을 받아 인자로 활용
@@ -454,49 +506,88 @@ public class PostApiController {
     static class PostDto {
 
         private Long id;
-
-        private Long member_id;
-
+        private String nickname;
+        private String text;
         private String type;
         private String title;
-        private String text;
+        private String address;
         private LocalDateTime post_date;
         private String promise_date;
         private String promise_start_time;
         private String promise_end_time;
         private int max_people;
         private int now_people;
-        private PromiseStatus promise_status;
-        private int view;
-        private int like_count;
-        private Long member_id2;
-        private Long member_id3;
-        private Long member_id4;
+
 
         public PostDto(Post post) {
             id = post.getId();
-            member_id = post.getMember().getMember_id();
+            nickname=post.getMember().getNickname();
+            address=post.getMember().getAddress().getAddress();
             type = post.getType();
             title = post.getTitle();
-            text = post.getText();
+            text=post.getText();
+
             post_date = post.getPost_date();
             promise_date = post.getPromise_date();
             promise_start_time = post.getPromise_start_time();
             promise_end_time = post.getPromise_end_time();
             max_people = post.getMax_people();
             now_people = post.getNow_people();
-            promise_status = post.getPromise_status();
-            view = post.getView();
-            like_count = post.getLike_count();
-
-            if (post.getMember2() == null) member_id2 = Long.valueOf(0);
-            else member_id2 = post.getMember2().getMember_id();
-            if (post.getMember3() == null) member_id3 = Long.valueOf(0);
-            else member_id3 = post.getMember3().getMember_id();
-            if (post.getMember4() == null) member_id4 = Long.valueOf(0);
-            else member_id4 = post.getMember4().getMember_id();
 
         }
+    }
+
+
+    // 게시글 조회용 DTO, 나중에 수정하거나 여러개 만들어서 사용할 것
+    @Data
+    @AllArgsConstructor
+    static class PostDto2 {
+        //제목 날짜 시간 참여인원수 n분의 가격 글
+
+
+        private Long id;
+        private String text;
+        private String type;
+        private String title;
+        private String address;
+        private String promise_date;
+        private String promise_start_time;
+        private String promise_end_time;
+        private int max_people;
+        private int now_people;
+
+
+        public PostDto2(){
+
+        }
+
+        public PostDto2(Post post) {
+            id = post.getId();
+
+            address=post.getMember().getAddress().getAddress();
+            type = post.getType();
+            title = post.getTitle();
+            text=post.getText();
+
+
+            promise_date = post.getPromise_date();
+            promise_start_time = post.getPromise_start_time();
+            promise_end_time = post.getPromise_end_time();
+            max_people = post.getMax_people();
+            now_people = post.getNow_people();
+
+        }
+    }
+
+
+
+
+
+
+
+    @Data
+    static class ResponseAddress{
+        private String address;
     }
 
 
@@ -514,6 +605,7 @@ public class PostApiController {
         private String promise_start_time;
         private String promise_end_time;
         private int max_people;
+        private int price;
     }
 
     // 게시글 수정정 api 함수가 인자 받을 클래스

@@ -1,5 +1,6 @@
 package mon.sinamon.repository;
 
+import mon.sinamon.domain.Address;
 import mon.sinamon.domain.Member;
 import org.springframework.stereotype.Repository;
 
@@ -68,6 +69,16 @@ public class MemberRepository {
         return em.createQuery("select m from Member m where m.kakao_id = :kakao_id", Member.class)
                 .setParameter("kakao_id", kakao_id)
                 .getSingleResult();
+    }
+
+    //주소로 회원 조회
+    public Member findByAddress(String address){
+
+        return em.createQuery("select m from Member m where m.address.address = :address", Member.class)
+                .setParameter("address", address)
+                .getSingleResult();
+
+       // createQuery( "select a from RandomEntity a where a.embedded.valueA in (:value)" ).setParameterList( "value", Arrays.asList( 1L, 2L ) ).list();
     }
 
 

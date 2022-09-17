@@ -57,6 +57,7 @@ public class MemberController {
     }
 
 
+
     @GetMapping("api/members/kakaologinnn")
     public String kakaoLogin(){
         return "members/kakao";
