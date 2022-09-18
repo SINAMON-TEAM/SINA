@@ -254,7 +254,7 @@ public class MemberService {
 
 
     //사용자의 위도와 경도를 저장
-    @Transactional
+    /*@Transactional
     public void updateXY(Member member,String X, String Y){
         Address address=member.getAddress();
         String addresss=address.getAddress();
@@ -263,7 +263,7 @@ public class MemberService {
         Address newaddress=new Address(addresss,X,Y,zipcode);
         member.setAddress(newaddress);
     }
-
+*/
 
     //사용자의 esg_point, esg_level 수정
     @Transactional

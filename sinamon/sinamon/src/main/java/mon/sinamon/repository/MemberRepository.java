@@ -73,6 +73,7 @@ public class MemberRepository {
 
     //주소로 회원 조회
     public Member findByAddress(String address){
+        System.out.println("ujujaddress = " + address);
 
         return em.createQuery("select m from Member m where m.address.address = :address", Member.class)
                 .setParameter("address", address)

@@ -148,6 +148,7 @@ public class MemberApiController {
         member.setMajor(major);
         member.setAddress(address);
         member.setNickname(nickname);
+        //member.setZipcode(zipcode);
 
 
         Long member_id = memberService.join(member);
@@ -198,7 +199,7 @@ public class MemberApiController {
     }
 
     //프론트로 부터 받은 경도와 위도 db에 저장
-    @PostMapping("/api/members/address")
+ /*   @PostMapping("/api/members/address")
     public void saveXY(@RequestParam String X, @RequestParam String Y, HttpServletRequest httpServletRequest){
         
         Member member=findMemberInSession(httpServletRequest);
@@ -213,7 +214,7 @@ public class MemberApiController {
         
     }
 
-
+*/
 
 
 

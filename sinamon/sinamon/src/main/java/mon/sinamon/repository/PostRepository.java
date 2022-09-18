@@ -36,7 +36,7 @@ public class PostRepository {
     //회원이 생성한 id로 게시글 검색 (원래는 닉네임으로 검색하는걸 하고 싶었는데 일단 닉네임이 없으니 id로 만듦)
     public List<Post> findByMemberMakingId(Long member_id){
         return em.createQuery("select p from Post p where p.member.id = :member_id", Post.class)
-                .setParameter("id", member_id)
+                .setParameter("member_id", member_id)
                 .getResultList();
     }
 

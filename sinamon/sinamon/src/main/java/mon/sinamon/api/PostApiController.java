@@ -180,15 +180,15 @@ public class PostApiController {
 
     //도로명 주소로 게시글 조회
     @PostMapping("/api/posts/address")
-    public Member getPostByAddress(@RequestBody @Valid ResponseAddress responseAddress){
+    public List<PostDto2> getPostByAddress(@RequestBody @Valid ResponseAddress responseAddress){
         //String address = responseAddress.getAddress();
        // System.out.println("address = " + address);
         String address = responseAddress.getAddress();
         Member memberByAddress = memberService.findMemberByAddress(address);
 
-        return memberByAddress;
 
-        /*
+
+
         //제목 날짜 시간 참여인원수 n분의 가격 글
         List<Post> posts = postService.findPostByMemberMakingId(memberByAddress.getMember_id());
 
@@ -196,7 +196,7 @@ public class PostApiController {
                 .map(p -> new PostDto2(p))
                 .collect(Collectors.toList());
 
-         return result;*/
+         return result;
 
     }
 
@@ -555,6 +555,7 @@ public class PostApiController {
         private String promise_end_time;
         private int max_people;
         private int now_people;
+        private int price;
 
 
         public PostDto2(){
@@ -568,6 +569,7 @@ public class PostApiController {
             type = post.getType();
             title = post.getTitle();
             text=post.getText();
+            price=post.getPrice();
 
 
             promise_date = post.getPromise_date();

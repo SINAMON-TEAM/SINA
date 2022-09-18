@@ -24,14 +24,22 @@ public class Member {
     private String email;
     private int esg_level=1;  //esg 레벨
     private int esg_point=0;  //esg 포인트 (일단 100까지로하자)
+    //private String address;
+   // private String logitude;    //경도(x축)
+    //private String latitude;    //위도(y축)
+  //  private String zipcode; //우편번호
+   // private String more_address; //추가 주소
+   // private String last_address; //참고사항
 
-    @JsonIgnore
+
+
     @Embedded
     private Address address = new Address("default","default","default","default","default","default");
    // private Address address;
 
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore
     private List<Post> posts = new ArrayList<>();
 
 
