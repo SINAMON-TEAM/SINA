@@ -43,6 +43,9 @@ public class MemberService {
     //카카오 id값으로 조회
     public Member findMemberBykakaoId(Long kakao_id) {return memberRepository.findBykakaoId(kakao_id);}
 
+    //주소로 조회
+    public Member findMemberByAddress(String address) {return memberRepository.findByAddress(address);}
+
 
 
     public String getKaKaoAccessToken(String code){
@@ -63,7 +66,7 @@ public class MemberService {
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=5a839021b9022410f2f0a040060fc1dc"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=http://113.198.137.188:81/api/members/kakaologin"); // TODO 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=http://172.30.7.190:5500/SINAMON/HTML/login.html"); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
@@ -251,7 +254,7 @@ public class MemberService {
 
 
     //사용자의 위도와 경도를 저장
-    @Transactional
+    /*@Transactional
     public void updateXY(Member member,String X, String Y){
         Address address=member.getAddress();
         String addresss=address.getAddress();
@@ -260,7 +263,7 @@ public class MemberService {
         Address newaddress=new Address(addresss,X,Y,zipcode);
         member.setAddress(newaddress);
     }
-
+*/
 
     //사용자의 esg_point, esg_level 수정
     @Transactional

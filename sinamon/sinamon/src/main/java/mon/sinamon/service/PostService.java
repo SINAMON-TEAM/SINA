@@ -33,8 +33,10 @@ public class PostService {
     //게시글 id로 조회
     public Post findPostById(Long id) {return postRepository.findOne(id);}
 
-    //회원이 만든 id로 게시글 조회
-    public List<Post> findPostByMemberMakingId(String id) {return postRepository.findByMemberMakingId(id);}
+
+
+   //회원이 만든 id로 게시글 조회
+    public List<Post> findPostByMemberMakingId(Long id) {return postRepository.findByMemberMakingId(id);}
 
     //회원 id로 게시글 조회
     public List<Post> findPostByMemberId(Long id) {return postRepository.findByMemberId(id);}

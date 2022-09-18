@@ -9,6 +9,7 @@ import mon.sinamon.domain.Member;
 import mon.sinamon.service.MemberService;
 import mon.sinamon.service.UserService;
 import org.apache.catalina.User;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Embedded;
@@ -44,10 +45,10 @@ public class MemberApiController {
 
     //카카오 로그인,회원가입(api버전)
     @PostMapping("/api/members/kakaologin")
-    public void createKakaoMember(@RequestParam String code
-            , HttpServletRequest httpServletRequest) {
-
-
+    public void createKakaoMember(@RequestBody @Valid Test test,
+             HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        String code=test.getCode();
+        System.out.println("code="+code);
 
         HttpSession session=httpServletRequest.getSession();
         String kaKaoAccessToken = memberService.getKaKaoAccessToken(code);
@@ -82,6 +83,11 @@ public class MemberApiController {
         session.setAttribute("member", member);
         session.setAttribute("access_token",kaKaoAccessToken);
 
+/*
+        httpServletResponse.setHeader("access_token",kaKaoAccessToken);
+        httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://172.30.7.190:5500");
+        httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
+*/
     }
 
 
@@ -101,7 +107,7 @@ public class MemberApiController {
 
     @PostMapping("/api/members/create")
     public void createMember(@RequestBody @Valid CreateMemberRequest createMemberRequest,
-                                             HttpServletRequest httpServletRequest) {
+                             HttpServletRequest httpServletRequest) {
 
         Member member=findMemberInSession(httpServletRequest);
         if(member==null){
@@ -117,7 +123,6 @@ public class MemberApiController {
 
             memberService.updateMember(memberBykakaoId.getKakao_id(),major,address,nickname);
         }
-
 
     }
 
@@ -135,13 +140,16 @@ public class MemberApiController {
         String major=createMemberRequest.getMajor();
         String address_s=createMemberRequest.getAddress();
         String nickname=createMemberRequest.getNickname();
+        String zipcode=createMemberRequest.getZipcode();
 
-        Address address=new Address(address_s);
+        Address address=new Address(address_s, "1","2",zipcode);
 
         Member member=new Member();
         member.setMajor(major);
         member.setAddress(address);
         member.setNickname(nickname);
+        //member.setZipcode(zipcode);
+
 
         Long member_id = memberService.join(member);
         session.setAttribute("member_id", member_id);
@@ -191,7 +199,7 @@ public class MemberApiController {
     }
 
     //프론트로 부터 받은 경도와 위도 db에 저장
-    @PostMapping("/api/members/address")
+ /*   @PostMapping("/api/members/address")
     public void saveXY(@RequestParam String X, @RequestParam String Y, HttpServletRequest httpServletRequest){
         
         Member member=findMemberInSession(httpServletRequest);
@@ -205,6 +213,8 @@ public class MemberApiController {
         
         
     }
+
+*/
 
 
 
@@ -245,10 +255,15 @@ public class MemberApiController {
     */
 
     @Data
+    static class Test{
+        private String code;
+    }
+    @Data
     static class CreateMemberRequest {
         private String major;
         private String address;
         private String nickname;
+        private String zipcode;
     }
 
     // 회원 가입 api가 반환하는 클래스, 지금은 id만 반환하도록 하고 있으나 이후에 수정 가능

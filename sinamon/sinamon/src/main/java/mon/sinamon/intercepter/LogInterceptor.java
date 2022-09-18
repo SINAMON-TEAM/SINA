@@ -8,7 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
-
+/*
 @Slf4j
 public class LogInterceptor implements HandlerInterceptor {
 
@@ -43,3 +43,4 @@ public class LogInterceptor implements HandlerInterceptor {
         Object logId = request.getAttribute(LOG_ID);
     }
 }
+*/

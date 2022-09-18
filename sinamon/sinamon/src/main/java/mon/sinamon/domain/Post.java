@@ -40,6 +40,7 @@ public class Post {
 
     private int view = 0;
     private int like_count = 0;
+    private int price;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="member_id2")
